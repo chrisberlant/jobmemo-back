@@ -1,7 +1,7 @@
-import Card from "./card";
-import Contact from "./contact";
-import Document from "./document";
-import User from "./user";
+import Card from "./card.js";
+import Contact from "./contact.js";
+import Document from "./document.js";
+import User from "./user.js";
 
 // Relations between a user and its cards
 User.hasMany(Card, {
