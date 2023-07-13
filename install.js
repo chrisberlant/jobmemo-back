@@ -2,12 +2,11 @@
 
 import { Card, Contact, Document, User } from './app/models/index.js';
 
-
 async function main() {
+    await User.sync();
     await Card.sync();
     await Contact.sync();
     await Document.sync();
-    await User.sync();
 }
 
 main().then(null).catch(console.log);
