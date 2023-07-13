@@ -3,14 +3,11 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const sequelize = new Sequelize(process.env.PG_URL, {
+    dialect: "postgres",
     define: {
         timestamps: false
     },
-    logging: true
+    logging: console.log
 });
-
-sequelize.authenticate()
-.then(() => { console.log("OK"); })
-.catch((error) => { console.error(error); });
 
 export default sequelize;

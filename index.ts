@@ -4,7 +4,7 @@ import express from 'express';
 // const userMiddleware = require('./middlewares/user');
 import router from './app/router';
 import cors from 'cors';
-// const middleware404 = require("./src/middlewares/middleware404");
+import middleware404 from './app/middlewares/middleware404'
 
 const app = express();
 app.use(express.static('public'));
@@ -19,7 +19,7 @@ app.use(express.json());
 
 app.use(router);
 
-// app.use(middleware404);
+app.use(middleware404);
 
 
 const port = process.env.PORT || 3000;
