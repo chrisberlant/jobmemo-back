@@ -4,8 +4,14 @@ import sequelize from '../sequelize-client'
 class Contact extends Model {};
 
 Contact.init({
-  first_name: DataTypes.TEXT,
-  last_name: DataTypes.TEXT,
+  first_name: {
+    type: DataTypes.TEXT,
+    allowNull: false
+  },
+  last_name: {
+    type: DataTypes.TEXT,
+    allowNull: false
+  },
   occupation: DataTypes.TEXT,
   email: DataTypes.TEXT,
   phone: DataTypes.TEXT,

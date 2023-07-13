@@ -4,9 +4,15 @@ import sequelize from '../sequelize-client'
 class Card extends Model {};
 
 Card.init({
-  title: DataTypes.TEXT,
+  title: {
+    type: DataTypes.TEXT,
+    allowNull: false
+  },
   category: DataTypes.TEXT,
-  index: DataTypes.INTEGER,
+  index: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0
+  },
   enterprise_name: DataTypes.TEXT,
   contract_type: DataTypes.TEXT,
   description: DataTypes.TEXT,
@@ -18,8 +24,11 @@ Card.init({
   color: DataTypes.TEXT,
   is_deleted: DataTypes.BOOLEAN,
   notes: DataTypes.TEXT,
-  reminder: DataTypes.DATE,
+  reminder: DataTypes.DATE
 }, {
+  timestamps: true,
+  createdAt: 'created_at',
+  updatedAt: false,
   sequelize,
   tableName: "card"
 });

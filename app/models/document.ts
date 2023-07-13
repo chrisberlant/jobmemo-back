@@ -4,9 +4,15 @@ import sequelize from '../sequelize-client'
 class Document extends Model {};
 
 Document.init({
-  title: DataTypes.TEXT,
+  title: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+  },
   type: DataTypes.TEXT,
-  url: DataTypes.TEXT
+  url: {
+    type: DataTypes.TEXT,
+    allowNull: false
+  }
 }, {
   sequelize,
   tableName: "document"
