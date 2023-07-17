@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 import express from 'express';
+import multer from 'multer';
 // const userMiddleware = require('./middlewares/user');
 import router from './app/router';
 import cors from 'cors';
@@ -13,6 +14,8 @@ app.use(express.static('public'));
 app.use(cors());
 // On demande à Express d'extraire les données des requêtes POST
 app.use(express.json());
+const mutipartParser = multer();
+app.use(mutipartParser.none());
 
 
 // app.use(userMiddleware);
