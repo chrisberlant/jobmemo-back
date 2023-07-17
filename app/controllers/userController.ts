@@ -48,8 +48,10 @@ const userController = {
         res.status(500).json(error);
       }
 
+    } else {
+      res.status(401).json("Email or password not defined");
     }
-  }
+    }
 }
 
 export default userController;
