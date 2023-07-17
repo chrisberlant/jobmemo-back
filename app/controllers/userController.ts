@@ -30,7 +30,7 @@ const userController = {
       try {
 
         const user = await User.findOne({ where:    // Find user in DB
-          { email: email }
+          { email: email.toLowerCase() }
         });
 
         if (!user) {
