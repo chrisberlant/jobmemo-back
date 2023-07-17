@@ -42,7 +42,6 @@ Card.belongsToMany(Document, {
     through: 'card_has_document',
     foreignKey: 'card_id',
     otherKey: 'document_id',
-    timestamps: false
 });
 
 Document.belongsToMany(Card, {
@@ -50,7 +49,6 @@ Document.belongsToMany(Card, {
     through: 'card_has_document',
     foreignKey: 'document_id',
     otherKey: 'card_id',
-    timestamps: false
 });
 
 // Junction table between cards and contacts (many to many)
@@ -59,7 +57,6 @@ Card.belongsToMany(Contact, {
     through: 'card_has_contact',
     foreignKey: 'card_id',
     otherKey: 'contact_id',
-    timestamps: false
 });
 
 Contact.belongsToMany(Card, {
@@ -67,7 +64,6 @@ Contact.belongsToMany(Card, {
     through: 'card_has_contact',
     foreignKey: 'contact_id',
     otherKey: 'card_id',
-    timestamps: false
 });
 
 export { User, Card, Contact, Document };
