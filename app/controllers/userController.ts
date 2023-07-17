@@ -26,23 +26,22 @@ const userController = {
     // if (!email.isEmail()) { // Checking if user input is email type
     //   res.status(401).json('Invalid email format');
     // } else {
-
+    if (email && password) {
       try {
 
         const user = await User.findOne({ where:    // Find user in DB
-        { email: email.toLowerCase() }
-      });
+          { email: email }
+        });
 
-      if (!user) {
-        res.status(401).json(`User ${email} does not exist`);
-      } else {
-          if (user.dataValues.password === password) {          // Check if passwords match
-            res.status(200).json(`User ${user.dataValues.first_name} ${user.dataValues.last_name} connected`);
-            console.log(user);
-          } else {
-            res.status(401).json('Incorrect password');
-          }
-      }
+        if (!user) {
+          res.status(401).json(`User ${email} does not exist`);
+        } else {
+            if (user.dataValues.password === password) {          // Check if passwords match
+              res.status(200).json(`User ${user.dataValues.first_name} ${user.dataValues.last_name} connected`);
+            } else {
+              res.status(401).json('Incorrect password');
+            }
+        }
 
       } catch (error) {
         console.trace(error);
@@ -50,7 +49,7 @@ const userController = {
       }
 
     }
-  // }
+  }
 }
 
 export default userController;
