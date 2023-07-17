@@ -6,4 +6,6 @@ router.get('/', (req: Request, res: Response) => res.send("Hello world"));
 
 router.get('/users', userController.getAllUsers);
 
+router.post('/login', userController.login);
+
 export default router;
