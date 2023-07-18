@@ -3,9 +3,9 @@ dotenv.config();
 import express from 'express';
 import multer from 'multer';
 // const userMiddleware = require('./middlewares/user');
-import router from './app/router';
+import router from './app/router.js';
 import cors from 'cors';
-import middleware404 from './app/middlewares/middleware404'
+import middleware404 from './app/middlewares/middleware404.js'
 
 const app = express();
 app.use(express.static('public'));

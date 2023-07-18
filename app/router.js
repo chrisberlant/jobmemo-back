@@ -1,9 +1,9 @@
-import { Router, Request, Response } from 'express'
+import { Router } from 'express'
 const router = Router();
-import userController from './controllers/userController';
-import cardController from './controllers/cardController';
+import userController from './controllers/userController.js';
+import cardController from './controllers/cardController.js';
 
-router.get('/', (req: Request, res: Response) => res.send("Hello world"));
+router.get('/', (req, res) => res.send("Hello world"));
 
 router.get('/users', userController.getAllUsers);
 

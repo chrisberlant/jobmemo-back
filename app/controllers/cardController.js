@@ -1,10 +1,8 @@
 import { Card } from '../models/index.js';
-import { Request, Response } from 'express';
-
 
 const cardController = {
 
-    async getAllUserCards(req: Request, res: Response) {
+    async getAllUserCards(req, res) {
         const userId = req.params.userId;
 
         try {
@@ -22,8 +20,6 @@ const cardController = {
         }
 
       },
-
-
 
 }
 
