@@ -11,4 +11,6 @@ router.post('/login', userController.login);
 
 router.get('/userCards/:userId', cardController.getAllUserCards);
 
+router.post('/register', userController.register);
+
 export default router;
