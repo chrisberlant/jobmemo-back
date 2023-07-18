@@ -14,6 +14,8 @@ app.use(express.static('public'));
 app.use(cors());
 // On demande à Express d'extraire les données des requêtes POST
 app.use(express.json());
+
+// Multer allows to handle form inputs as a body object, and files uploaded as a file object
 const mutipartParser = multer();
 app.use(mutipartParser.none());
 
