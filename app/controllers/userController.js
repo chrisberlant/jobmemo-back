@@ -40,6 +40,7 @@ const userController = {
         } else {
 
           if (user.password === password) {          // Check if passwords match
+            delete user.dataValues.password;
             res.status(200).json(user);
           } else {
             res.status(401).json('Incorrect password');
