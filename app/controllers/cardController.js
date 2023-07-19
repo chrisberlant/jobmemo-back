@@ -11,7 +11,7 @@ const cardController = {
           if (!cards) {
             res.status(404).json("Can't find cards");
           } else {
-            res.json(cards);
+            res.status(200).json(cards);
           }
 
         } catch (error) {
