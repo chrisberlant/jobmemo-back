@@ -14,6 +14,7 @@ Card.init({
     defaultValue: 0
   },
   enterprise_name: DataTypes.TEXT,
+  enterprise_activity: DataTypes.TEXT,
   contract_type: DataTypes.TEXT,
   description: DataTypes.TEXT,
   offer_url: DataTypes.TEXT,
@@ -24,7 +25,8 @@ Card.init({
   color: DataTypes.TEXT,
   is_deleted: DataTypes.BOOLEAN,
   notes: DataTypes.TEXT,
-  reminder: DataTypes.DATE
+  reminder: DataTypes.DATE,
+  logo_url: DataTypes.TEXT,
 }, {
   timestamps: true,
   createdAt: 'created_at',
