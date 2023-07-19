@@ -4,7 +4,7 @@ const cardController = {
 
     async getAllUserCards(req, res) {
         const userId = req.params.userId;
-
+        console.log("requete dans le controller", req.user);
         try {
           const cards = await Card.findAll({ where : {'user_id' : userId}});
 

@@ -1,4 +1,7 @@
 import { User } from '../models/index.js';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+dotenv.config();
 import * as EmailValidator from 'email-validator';
 
 
@@ -38,10 +41,14 @@ const userController = {
         if (!user) {          // If user does not exist in the DB
           res.status(404).json(`User ${email} does not exist`);
         } else {
-
-          if (user.password === password) {          // Check if passwords match
+          // TODO : LES PASSWORD DOIVENT ETRE CHIFFRE (bcrypt.compare)
+          if (user.password === password) {
+                      // Check if passwords match
             delete user.dataValues.password;
-            res.status(200).json(user);
+            //On déclare une variable qui contiendra notre token qu'on enverra vers le front(jwt.sign({nosInfos}, SECRET_KEY))
+            //TODO : VERIFIER LES INFOS ESSENTIELLES (id user, email ?);
+            const token = jwt.sign({user}, process.env.SECRET_KEY);
+            res.status(200).json({user, token});
           } else {
             res.status(401).json('Incorrect password');
           }
