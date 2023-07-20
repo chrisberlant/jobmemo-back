@@ -3,10 +3,10 @@ import { Card } from '../models/index.js';
 const cardController = {
 
     async getAllUserCards(req, res) {
-        const userId = req.params.userId;
+        const userId = req.user.user.id;
         console.log("requete dans le controller", req.user);
         try {
-          const cards = await Card.findAll({ where : {'user_id' : userId}});
+          const cards = await Card.findAll({ where : {'userId' : userId}});
 
           if (!cards) {
             res.status(404).json("Can't find cards");

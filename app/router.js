@@ -10,7 +10,7 @@ router.get('/users', userController.getAllUsers);
 
 router.post('/login', userController.login);
 
-router.get('/userCards/:userId', jwtMiddleware,cardController.getAllUserCards);
+router.get('/userCards/', jwtMiddleware, cardController.getAllUserCards);
 
 router.post('/register', userController.register);
 

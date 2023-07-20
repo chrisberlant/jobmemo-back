@@ -6,15 +6,19 @@ class User extends Model {};
 User.init({
   email: {
     type: DataTypes.TEXT,
-    allowNull: false,
+    allowNull: false
   },
-  first_name: DataTypes.TEXT,
-  last_name: DataTypes.TEXT,
+  firstName: DataTypes.TEXT,
+  lastName: DataTypes.TEXT,
   password: {
     type: DataTypes.TEXT,
     allowNull: false
   },
-  avatar_url: DataTypes.TEXT
+  avatarUrl: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+    defaultValue: '/img/default_avatar.png'
+  }
 }, {
   sequelize,
   tableName: "user"

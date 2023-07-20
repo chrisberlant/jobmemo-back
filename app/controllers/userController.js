@@ -1,9 +1,6 @@
 import { User } from '../models/index.js';
 import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
-dotenv.config();
 import * as EmailValidator from 'email-validator';
-
 
 const userController = {
 
@@ -28,7 +25,7 @@ const userController = {
 
     if (!(email && password)) {
       res.status(401).json('Email or password not defined');
-    } else if (!EmailValidator.validate(email))  { // Checking if user input is email type
+    } else if (!EmailValidator.validate(email)) { // Checking if user input is email type
       res.status(400).json('Invalid email format');
     } else {
 

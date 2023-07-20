@@ -8,10 +8,15 @@ Document.init({
     type: DataTypes.TEXT,
     allowNull: false,
   },
-  type: DataTypes.TEXT,
+  type: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+    defaultValue: 'Autre'
+  },
   url: {
     type: DataTypes.TEXT,
-    allowNull: false
+    allowNull: false,
+    defaultValue: ''
   }
 }, {
   sequelize,
