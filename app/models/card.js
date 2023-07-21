@@ -6,7 +6,8 @@ class Card extends Model {};
 Card.init({
   title: {
     type: DataTypes.TEXT,
-    allowNull: false
+    allowNull: false,
+    defaultValue: 'Titre de la fiche'
   },
   category: {
     type: DataTypes.TEXT,

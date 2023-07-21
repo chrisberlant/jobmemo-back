@@ -7,6 +7,7 @@ Document.init({
   title: {
     type: DataTypes.TEXT,
     allowNull: false,
+    defaultValue: 'Nouveau document'
   },
   type: {
     type: DataTypes.TEXT,

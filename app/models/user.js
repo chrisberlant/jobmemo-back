@@ -8,8 +8,14 @@ User.init({
     type: DataTypes.TEXT,
     allowNull: false
   },
-  firstName: DataTypes.TEXT,
-  lastName: DataTypes.TEXT,
+  firstName: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+  },
+  lastName: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+  },
   password: {
     type: DataTypes.TEXT,
     allowNull: false
@@ -18,7 +24,8 @@ User.init({
     type: DataTypes.TEXT,
     allowNull: false,
     defaultValue: '/img/default_avatar.png'
-  }
+  },
+  address: DataTypes.TEXT
 }, {
   sequelize,
   tableName: "user"

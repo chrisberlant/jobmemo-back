@@ -6,7 +6,7 @@ import User from "./user.js";
 // Relations between a user and its cards
 User.hasMany(Card, {
     as: 'cards',
-    foreignKey: 'userId'
+    foreignKey: { name: 'userId', allowNull: false }
 });
 
 Card.belongsTo(User, {
@@ -17,7 +17,7 @@ Card.belongsTo(User, {
 // Relations between a user and its contacts
 User.hasMany(Contact, {
     as: 'contacts',
-    foreignKey: 'userId'
+    foreignKey: { name: 'userId', allowNull: false }
 });
 
 Contact.belongsTo(User, {
@@ -28,7 +28,7 @@ Contact.belongsTo(User, {
 // Relations between a user and its documents
 User.hasMany(Document, {
     as: 'documents',
-    foreignKey: 'userId'
+    foreignKey: { name: 'userId', allowNull: false }
 });
 
 Document.belongsTo(User, {
@@ -40,8 +40,8 @@ Document.belongsTo(User, {
 Card.belongsToMany(Document, {
     as: 'documents',
     through: 'card_has_document',
-    foreignKey: 'cardId',
-    otherKey: 'documentId',
+    foreignKey: { name: 'cardId', allowNull: false },
+    otherKey: { name: 'documentId', allowNull: false }
 });
 
 Document.belongsToMany(Card, {
@@ -55,8 +55,8 @@ Document.belongsToMany(Card, {
 Card.belongsToMany(Contact, {
     as : 'contacts',
     through: 'card_has_contact',
-    foreignKey: 'cardId',
-    otherKey: 'contactId',
+    foreignKey: { name: 'cardId', allowNull: false },
+    otherKey: { name: 'contactId', allowNull: false },
 });
 
 Contact.belongsToMany(Card, {
