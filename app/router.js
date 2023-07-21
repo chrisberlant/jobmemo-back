@@ -14,6 +14,7 @@ router.patch('/modifyUserInfos', jwtMiddleware, userController.modifyUserInfos);
 
 router.get('/userCards/', jwtMiddleware, cardController.getDashboardCards);
 router.get('/card/:cardId', jwtMiddleware, cardController.getCardById);
+router.patch('/modifyCardLocation', jwtMiddleware, cardController.modifyCardLocation);
 
 
 export default router;
