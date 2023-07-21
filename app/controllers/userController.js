@@ -109,7 +109,11 @@ const userController = {
           if (lastName) user.lastName = lastName;
           if (address) user.address = address;
 
-          await user.save();
+          const userModified = await user.save();
+          if (!userModified) {
+            throw new Error("Impossible de modifier les infos utilisateur");
+          }
+
           res.status(200).json(user);
         }
 

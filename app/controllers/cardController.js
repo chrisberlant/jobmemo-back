@@ -39,6 +39,33 @@ const cardController = {
           res.status(500).json(error);
         }
 
+      },
+
+      async modifyCardLocation(req, res) {
+        const { cardId, index, category } = req.body;
+
+        try {
+
+          const card = await Card.findByPk(cardId);
+
+          if (!card) {
+            res.status(404).json("Impossible de trouver la carte dans la base");
+          } else {
+            if (index) card.index = index;
+            if (category) card.category = category;
+
+            const cardModified = await card.save();
+            if (!cardModified) {
+              throw new Error("Impossible de modifier la carte");
+            }
+
+            res.status(200).json(card);
+          }
+
+        }catch(error) {
+          console.error(error);
+          res.status(500).json(error);
+        }
       }
 
 }
