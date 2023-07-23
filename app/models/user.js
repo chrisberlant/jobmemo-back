@@ -6,7 +6,8 @@ class User extends Model {};
 User.init({
   email: {
     type: DataTypes.TEXT,
-    allowNull: false
+    allowNull: false,
+    unique: true,
   },
   firstName: {
     type: DataTypes.TEXT,

@@ -1,6 +1,7 @@
 import { User } from '../models/index.js';
 import jwt from 'jsonwebtoken';
 import * as EmailValidator from 'email-validator';
+import { dataValidation, loginSchema } from '../validationSchemas.js';
 
 const userController = {
 
@@ -23,11 +24,9 @@ const userController = {
   async login(req, res) {
     const { email, password } = req.body;
 
-    if (!(email && password)) {
-      res.status(401).json('Email or password not defined');
-    } else if (!EmailValidator.validate(email)) { // Checking if user input is email type
-      res.status(400).json('Invalid email format');
-    } else {
+    if (!dataValidation(req.body, loginSchema)) {       // Check if credentials provided are the types of data required
+      return res.status(401).json("Données de connexion invalides");
+    }
 
       try {
 
@@ -38,7 +37,7 @@ const userController = {
         if (!userSearched) {          // If user does not exist in the DB
           res.status(404).json(`User ${email} does not exist`);
         } else {
-          // TODO : LES PASSWORD DOIVENT ETRE CHIFFRE (bcrypt.compare)
+          // TODO : LES PASSWORD DOIVENT ETRE CHIFFRÉS (bcrypt.compare)
           if (userSearched.password === password) {
             const user = userSearched.get({ plain: true});    // Create a copy of the sequelize object with only the infos needed and removing the password
             delete user.password;
@@ -56,7 +55,7 @@ const userController = {
           res.status(500).json(error);
         }
 
-      }
+
   },
 
     async register(req, res) {
