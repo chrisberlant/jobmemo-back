@@ -1,10 +1,10 @@
 import { User } from '../models/index.js';
 import jwt from 'jsonwebtoken';
-import * as EmailValidator from 'email-validator';
-import { dataIsNotValid, loginSchema, registerSchema } from '../validationSchemas.js';
+import { dataValidation, loginSchema, registerSchema, modifyUserSchema } from '../validationSchemas.js';
 
 const userController = {
 
+  // Used as test only
   async getAllUsers(req, res) {
     try {
       const users = await User.findAll();
@@ -22,14 +22,13 @@ const userController = {
   },
 
   async login(req, res) {
-    const { email, password } = req.body;
-
-    const dataError = dataIsNotValid(req.body, loginSchema) // Check if credentials provided are the types of data required
-    if (dataError) {
-      return res.status(401).json(dataError.details[0].message);  // Send the error details
-    }
-
     try {
+      const { email, password } = req.body;
+
+      const dataError = dataValidation(req.body, loginSchema); // Check if credentials provided are the types of data required
+      if (dataError) {
+        return res.status(400).json(dataError);  // Send the error details
+      }
 
       const userSearched = await User.findOne({ where:    // Find user in DB
         { email: email.toLowerCase() }
@@ -58,25 +57,25 @@ const userController = {
   },
 
     async register(req, res) {
-      const { email, password, firstName, lastName } = req.body;
+      try {
+        const userToRegister = req.body;
+        const { email, password, confirmPassword } = userToRegister;
 
       // TODO chiffrement password
 
-      const dataError = dataIsNotValid(req.body, registerSchema) // Check if credentials provided are the types of data required
-      if (dataError) {
-        return res.status(400).json(dataError.details[0].message);  // Send the error details
-      }
-
-      try {
+        const dataError = dataValidation(userToRegister, registerSchema);
+        if (dataError) {
+          return res.status(400).json(dataError);
+        }
 
         const alreadyExistingUser = await User.findOne({ where:    // Check if user already exists
-          { email: email.toLowerCase() }
+          { email }
         });
 
         if (alreadyExistingUser) {
           res.status(401).json('This email address is already in use');
         } else {
-          const user = await User.create({ email, password, firstName, lastName });
+          const user = await User.create(userToRegister);
           res.status(201).json(`User ${user} has been created`);
         };
 
@@ -87,20 +86,35 @@ const userController = {
     },
 
     async modifyUserInfos(req, res) {
-      const userId = req.user.user.id;
-      const { email, firstName, lastName, address } = req.body;
-
       try {
+
+        const userId = req.user.user.id;
+        const infosToModify = req.body;
+
+        if (Object.keys(infosToModify).length === 0) { // If no data were provided by the user
+          return res.status(400).json("Aucune information fournie");
+        }
+
+        const dataError = dataValidation(infosToModify, modifyUserSchema);
+        if (dataError) {
+          return res.status(400).json(dataError.details[0].message);  // Send the error details
+        }
+
 
         const user = await User.findByPk(userId);
 
         if (!user) {
           res.status(404).json("Impossible de trouver l'utilisateur dans la base");
         } else {
-          if (email) user.email = email;
-          if (firstName) user.firstName = firstName;
-          if (lastName) user.lastName = lastName;
-          if (address) user.address = address;
+          // Change the values of the sequelize object to modify the DB
+          for (const key in infosToModify) {
+            if (key) user[key] = infosToModify[key];
+          }
+          // Is equivalent to, if we had destructured req.body
+          // if (email) user.email = email;
+          // if (firstName) user.firstName = firstName;
+          // if (lastName) user.lastName = lastName;
+          // if (address) user.address = address;
 
           const userModified = await user.save();
           if (!userModified) {

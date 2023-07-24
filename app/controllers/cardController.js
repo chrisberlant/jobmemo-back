@@ -1,11 +1,11 @@
 import { Card } from '../models/index.js';
+import { dataValidation, cardCreationSchema } from '../validationSchemas.js';
 
 const cardController = {
 
     async getDashboardCards(req, res) {
-        const userId = req.user.user.id;
-
-        try {
+      try {
+          const userId = req.user.user.id;
           const cards = await Card.findAll({ where: {'userId': userId}, attributes: ['id', 'title', 'enterpriseName', 'logoUrl', 'jobTitle', 'salary', 'location', 'category', 'notation', 'color', 'createdAt', 'index', 'isDeleted' ] });
 
           if (!cards) {
@@ -18,15 +18,13 @@ const cardController = {
           console.error(error);
           res.status(500).json(error);
         }
-
       },
 
       async getCardById(req, res) {
-        const cardId = req.params.cardId;
-        const userId = req.user.user.id;
-
         try {
-          const card = await Card.findOne({where : { 'id': cardId, 'userId': userId} });
+          const userId = req.user.user.id;
+          const cardId = req.params.cardId;
+          const card = await Card.findOne({ where : { 'id': cardId, 'userId': userId} });
 
           if (!card) {
             res.status(404).json (`La fiche avec l'id ${cardId} n'existe pas`);
@@ -38,21 +36,20 @@ const cardController = {
           console.error(error);
           res.status(500).json(error);
         }
-
       },
 
       async modifyCardLocation(req, res) {
-        const { cardId, index, category } = req.body;
-
         try {
-
-          const card = await Card.findByPk(cardId);
+          const cardToModify = req.body;
+          const { id, index, category } = cardToModify;
+          const card = await Card.findByPk(id);
 
           if (!card) {
             res.status(404).json("Impossible de trouver la carte dans la base");
           } else {
-            if (index) card.index = index;
-            if (category) card.category = category;
+            for (const key in cardToModify) {
+              if (key) card[key] = cardToModify[key];
+            }
 
             const cardModified = await card.save();
             if (!cardModified) {
@@ -62,7 +59,33 @@ const cardController = {
             res.status(200).json(card);
           }
 
-        }catch(error) {
+        } catch(error) {
+          console.error(error);
+          res.status(500).json(error);
+        }
+      },
+
+      async createNewCard (req, res) {
+        try {
+          // We do not need to destructurate here
+          // const { title, category, index, enterpriseName, enterpriseActivity, contractType, description,
+          //   offerUrl, location, salary, jobTitle, notation, color, isDeleted, notes, reminder, logoUrl } = req.body;
+          const newCardInfos = req.body;
+          const userId = req.user.user.id;
+
+          const dataError = dataValidation(newCardInfos, cardCreationSchema);
+          if (dataError) {
+            return res.status(400).json(dataError);
+          }
+
+          const newCard = await Card.create({...newCardInfos, userId });
+          if (!newCard) {
+            throw new Error("Impossible de créer la carte");
+          }
+
+          res.status(201).json(newCard);
+
+        } catch(error) {
           console.error(error);
           res.status(500).json(error);
         }
