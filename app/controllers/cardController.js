@@ -42,6 +42,8 @@ const cardController = {
         try {
           const cardToModify = req.body;
           const { id, index, category } = cardToModify;
+
+          // TODO JOI VALIDATION
           const card = await Card.findByPk(id);
 
           if (!card) {

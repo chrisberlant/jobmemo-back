@@ -88,7 +88,6 @@ const userController = {
 
     async modifyUserInfos(req, res) {
       try {
-
         const userId = req.user.user.id;
         const infosToModify = req.body;
 
@@ -100,7 +99,6 @@ const userController = {
         if (dataError) {
           return res.status(400).json(dataError.details[0].message);  // Send the error details
         }
-
 
         const user = await User.findByPk(userId);
 

@@ -3,7 +3,7 @@ import Joi from "joi";
 const loginSchema = Joi.object({
   email: Joi.string().email().required(),
   password: Joi.string().min(6).required()
-});
+}).options({ stripUnknown: true });
 
 const registerSchema = Joi.object({
   email: Joi.string().email().required(),
@@ -11,14 +11,14 @@ const registerSchema = Joi.object({
   confirmPassword: Joi.string().valid(Joi.ref('password')).required(),
   firstName: Joi.string().regex(/^[a-zA-ZÀ-ÿ' -]+$/).required(),
   lastName: Joi.string().regex(/^[a-zA-ZÀ-ÿ' -]+$/).required()
-});
+}).options({ stripUnknown: true });
 
 const modifyUserSchema = Joi.object({
   email: Joi.string().email(),
   firstName: Joi.string().regex(/^[a-zA-ZÀ-ÿ' -]+$/),
   lastName: Joi.string().regex(/^[a-zA-ZÀ-ÿ' -]+$/),
   address: Joi.string()
-});
+}).options({ stripUnknown: true });
 
 const cardCreationSchema = Joi.object({
   title: Joi.string(),
@@ -38,7 +38,7 @@ const cardCreationSchema = Joi.object({
   notes: Joi.string(),
   reminder: Joi.date(),
   logoUrl: Joi.string().uri()
-});
+}).options({ stripUnknown: true });
 
 
 // Function used to validate the data types according to data provided by the user and a validation schema
