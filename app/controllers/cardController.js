@@ -6,7 +6,7 @@ const cardController = {
     async getDashboardCards(req, res) {
       try {
           const userId = req.user.user.id;
-          const cards = await Card.findAll({ where: {'userId': userId}, attributes: ['id', 'title', 'enterpriseName', 'logoUrl', 'jobTitle', 'salary', 'location', 'category', 'notation', 'color', 'createdAt', 'index', 'isDeleted' ] });
+          const cards = await Card.findAll({ where: { userId } });
 
           if (!cards) {
             res.status(404).json("Can't find cards");
@@ -78,7 +78,7 @@ const cardController = {
             return res.status(400).json(dataError);
           }
 
-          const newCard = await Card.create({...newCardInfos, userId });
+          const newCard = await Card.create({ ...newCardInfos, userId });
           if (!newCard) {
             throw new Error("Impossible de créer la carte");
           }

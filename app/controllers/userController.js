@@ -23,9 +23,10 @@ const userController = {
 
   async login(req, res) {
     try {
-      const { email, password } = req.body;
+      const credentials = req.body;
+      const { email, password } = credentials;
 
-      const dataError = dataValidation(req.body, loginSchema); // Check if credentials provided are the types of data required
+      const dataError = dataValidation(credentials, loginSchema); // Check if credentials provided are the types of data required
       if (dataError) {
         return res.status(400).json(dataError);  // Send the error details
       }

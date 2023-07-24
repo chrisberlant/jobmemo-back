@@ -41,7 +41,7 @@ const cardCreationSchema = Joi.object({
 });
 
 
-
+// Function used to validate the data types according to data provided by the user and a validation schema
 const dataValidation = (data, schema) => {
     const { error } = schema.validate(data);
 
