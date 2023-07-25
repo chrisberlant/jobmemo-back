@@ -4,6 +4,12 @@ import sequelize from '../sequelize-client.js'
 class Card extends Model {};
 
 Card.init({
+  id: {
+    type: DataTypes.UUID,
+    primaryKey: true,
+    allowNull: false,
+    defaultValue: DataTypes.UUIDV4,
+  },
   title: {
     type: DataTypes.TEXT,
     allowNull: false,

@@ -4,6 +4,12 @@ import sequelize from '../sequelize-client.js'
 class Contact extends Model {};
 
 Contact.init({
+  id: {
+    type: DataTypes.UUID,
+    primaryKey: true,
+    allowNull: false,
+    defaultValue: DataTypes.UUIDV4,
+  },
   firstName: {
     type: DataTypes.TEXT,
     allowNull: false

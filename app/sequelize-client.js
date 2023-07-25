@@ -9,7 +9,7 @@ const sequelize = new Sequelize(process.env.PG_URL, {
         underscored: true,
     },
     logging: console.log,
-    set: true,
+    set: true,        // Queries only update the fields provided
 });
 
 // This hook allows to trim all the data provided by the user before they are inserted into the DB
