@@ -6,6 +6,7 @@ const loginSchema = Joi.object({
 }).options({ stripUnknown: true });
 
 const registerSchema = Joi.object({
+  id: Joi.any().forbidden(),
   email: Joi.string().email().required(),
   password: Joi.string().min(6).required(),
   confirmPassword: Joi.string().valid(Joi.ref('password')).required(),
@@ -14,6 +15,7 @@ const registerSchema = Joi.object({
 }).options({ stripUnknown: true });
 
 const modifyUserSchema = Joi.object({
+  id: Joi.any().forbidden(),
   email: Joi.string().email(),
   firstName: Joi.string().regex(/^[a-zA-ZÀ-ÿ' -]+$/),
   lastName: Joi.string().regex(/^[a-zA-ZÀ-ÿ' -]+$/),
@@ -21,6 +23,7 @@ const modifyUserSchema = Joi.object({
 }).options({ stripUnknown: true });
 
 const cardCreationSchema = Joi.object({
+  id: Joi.any().forbidden(),
   title: Joi.string(),
   category: Joi.string().valid('Mes offres', 'Mes candidatures', 'Mes relances', 'Mes entretiens'),
   index: Joi.number(),

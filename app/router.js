@@ -19,6 +19,7 @@ router.get('/userCards/', jwtMiddleware, cardController.getDashboardCards);
 router.get('/card/:cardId', jwtMiddleware, cardController.getCardById);
 router.post('/createNewCard', jwtMiddleware, cardController.createNewCard);
 router.patch('/modifyCardLocation', jwtMiddleware, cardController.modifyCardLocation);
+router.patch('/trashOrRestoreCard', jwtMiddleware, cardController.trashOrRestoreCard);
 
 
 export default router;
