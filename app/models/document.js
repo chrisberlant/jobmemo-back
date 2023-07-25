@@ -1,6 +1,5 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../sequelize-client.js'
-import { v4 as uuidv4 } from 'uuid';
 
 class Document extends Model {};
 
