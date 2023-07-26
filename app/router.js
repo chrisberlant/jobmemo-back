@@ -20,6 +20,7 @@ router.get('/card/:cardId', jwtMiddleware, cardController.getCardById);
 router.post('/createNewCard', jwtMiddleware, cardController.createNewCard);
 router.patch('/modifyCardLocation', jwtMiddleware, cardController.modifyCardLocation);
 router.patch('/trashOrRestoreCard', jwtMiddleware, cardController.trashOrRestoreCard);
+router.delete('/deleteCard', jwtMiddleware, cardController.deleteCard);
 
 
 export default router;

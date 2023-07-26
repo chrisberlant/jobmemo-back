@@ -3,125 +3,149 @@ import { dataValidation, cardCreationSchema } from '../validationSchemas.js';
 
 const cardController = {
 
-    async getDashboardCards(req, res) {
-      try {
-          const userId = req.user.user.id;
-          const cards = await Card.findAll({ where: { userId } });
+  async getDashboardCards(req, res) {
+    try {
+      const userId = req.user.user.id;
+      const cards = await Card.findAll({ where: { userId } });
 
-          if (!cards) {
-            return res.status(404).json("Can't find cards");
-          } else {
-            res.status(200).json(cards);
-          }
+      if (!cards) {
+        return res.status(404).json("Can't find cards");
+      }
 
-        } catch(error) {
-          console.error(error);
-          res.status(500).json(error);
-        }
-      },
+      res.status(200).json(cards);
 
-      async getCardById(req, res) {
-        try {
-          const userId = req.user.user.id;
-          const id = req.params.cardId;
-          const card = await Card.findOne({ where : { id, userId } });
+    } catch(error) {
+      console.error(error);
+      res.status(500).json(error);
+    }
+  },
 
-          if (!card) {
-            return res.status(404).json (`La fiche avec l'id ${id} n'existe pas`);
-          } else {
-            res.status(200).json(card);
-          }
+  async getCardById(req, res) {
+    try {
+      const userId = req.user.user.id;
+      const id = req.params.cardId;
+      const card = await Card.findOne({ where : { id, userId } });
 
-        } catch(error) {
-          console.error(error);
-          res.status(500).json(error);
-        }
-      },
+      if (!card) {
+        return res.status(404).json (`La fiche avec l'id ${id} n'existe pas`);
+      }
 
-      async modifyCardLocation(req, res) {
-        try {
-          const newLocation = req.body;
-          const { id, index, category } = newLocation;
+      res.status(200).json(card);
 
-          // TODO JOI VALIDATION
-          const card = await Card.findOne({ where : { id, userId } });
+    } catch(error) {
+      console.error(error);
+      res.status(500).json(error);
+    }
+  },
 
-          if (!card) {
-            return res.status(404).json("Impossible de trouver la carte dans la base");
-          } else {
-            for (const key in newLocation) {
-              if (key) card[key] = newLocation[key];
-            }
+  async modifyCardLocation(req, res) {
+    try {
+      const newLocation = req.body;
+      const { id, index, category } = newLocation;
 
-            const cardModified = await card.save();
-            if (!cardModified) {
-              throw new Error("Impossible de modifier la carte");
-            }
+      // TODO JOI VALIDATION
+      const card = await Card.findOne({ where : { id, userId } });
 
-            res.status(200).json(card);
-          }
+      if (!card) {
+        return res.status(404).json("Impossible de trouver la carte dans la base");
+      }
 
-        } catch(error) {
-          console.error(error);
-          res.status(500).json(error);
-        }
-      },
+      for (const key in newLocation) {
+        if (key) card[key] = newLocation[key];
+      }
 
-      async createNewCard(req, res) {
-        try {
-          // We do not need to destructurate here
-          // const { title, category, index, enterpriseName, enterpriseActivity, contractType, description,
-          //   offerUrl, location, salary, jobTitle, notation, color, isDeleted, notes, reminder, logoUrl } = req.body;
-          const newCardInfos = req.body;
-          const userId = req.user.user.id;
+      const cardModified = await card.save();
+      if (!cardModified) {
+        throw new Error("Impossible de modifier la carte");
+      }
 
-          const dataError = dataValidation(newCardInfos, cardCreationSchema);
-          if (dataError) {
-            return res.status(400).json(dataError);
-          }
+      res.status(200).json(card);
 
-          // New card is created according to the data provided by the user, and userId is set according to the request info containing the user id
-          const newCard = await Card.create({ ...newCardInfos, userId });
-          if (!newCard) {
-            throw new Error("Impossible de créer la carte");
-          }
+    } catch(error) {
+      console.error(error);
+      res.status(500).json(error);
+    }
+  },
 
-          res.status(201).json(newCard);
+  async createNewCard(req, res) {
+    try {
+      // We do not need to destructurate here
+      // const { title, category, index, enterpriseName, enterpriseActivity, contractType, description,
+      //   offerUrl, location, salary, jobTitle, notation, color, isDeleted, notes, reminder, logoUrl } = req.body;
+      const newCardInfos = req.body;
+      const userId = req.user.user.id;
 
-        } catch(error) {
-          console.error(error);
-          res.status(500).json(error);
-        }
-      },
+      const dataError = dataValidation(newCardInfos, cardCreationSchema);
+      if (dataError) {
+        return res.status(400).json(dataError);
+      }
 
-      async trashOrRestoreCard(req, res) {
-        try {
-          const { id } = req.body;
-          const userId = req.user.user.id;
+      // New card is created according to the data provided by the user, and userId is set according to the request info containing the user id
+      const newCard = await Card.create({ ...newCardInfos, userId });
+      if (!newCard) {
+        throw new Error("Impossible de créer la carte");
+      }
 
-          const card = await Card.findOne({ where : { id, userId } });
+      res.status(201).json(newCard);
 
-          if (!card) {
-            return res.status(404).json("Impossible de trouver la carte dans la base");
-          } else {
-            card.isDeleted = !card.isDeleted;
+    } catch(error) {
+      console.error(error);
+      res.status(500).json(error);
+    }
+  },
 
-            const cardTrashed = await card.save();
-            if (!cardTrashed && card.isDeleted === true) {
-              throw new Error("Impossible d'ajouter la carte dans la corbeille");
-            }
-            if (!cardTrashed) {
-              throw new Error("Impossible de restaurer la carte depuis la corbeille");
-            }
-          }
+  async trashOrRestoreCard(req, res) {
+    try {
+      const { id } = req.body;
+      const userId = req.user.user.id;
 
-          res.status(200).json(card);
+      const card = await Card.findOne({ where : { id, userId } });
 
-        } catch(error) {
-          console.error(error);
-          res.status(500).json(error);
-        }
-      },
+      if (!card) {
+        return res.status(404).json("Impossible de trouver la carte dans la base");
+      }
+
+      card.isDeleted = !card.isDeleted;
+
+      const cardTrashed = await card.save();
+      if (!cardTrashed && card.isDeleted === true) {
+        throw new Error("Impossible d'ajouter la carte dans la corbeille");
+      }
+      if (!cardTrashed) {
+        throw new Error("Impossible de restaurer la carte depuis la corbeille");
+      }
+
+      res.status(200).json(card);
+
+    } catch(error) {
+      console.error(error);
+      res.status(500).json(error);
+    }
+  },
+
+  async deleteCard(req, res) {
+    try {
+      const { id } = req.body;
+      const userId = req.user.user.id;
+
+      const card = await Card.findOne({ where : { id, userId } });
+
+      if (!card) {
+        return res.status(404).json("Impossible de trouver la carte dans la base");
+      }
+
+      const cardDeleted = await card.destroy();
+      if (!cardDeleted) {
+        throw new Error("Impossible de supprimer la carte");
+      }
+
+      res.status(200).json(card);
+
+    } catch(error) {
+      console.error(error);
+      res.status(500).json(error);
+    }
+  },
 
 }
 
