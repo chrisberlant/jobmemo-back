@@ -1,5 +1,5 @@
 import { Card } from '../models/index.js';
-import { dataValidation, cardCreationSchema } from '../validationSchemas.js';
+import { dataValidation, cardCreationSchema, cardSelectionSchema, cardMovingSchema, cardModificationSchema } from '../validationSchemas.js';
 
 const cardController = {
 
@@ -24,39 +24,16 @@ const cardController = {
     try {
       const userId = req.user.user.id;
       const id = req.params.cardId;
+
+      const dataError = dataValidation(req.body, cardSelectionSchema);
+      if (dataError) {
+        return res.status(400).json(dataError);
+      }
+
       const card = await Card.findOne({ where : { id, userId } });
 
       if (!card) {
         return res.status(404).json (`La fiche avec l'id ${id} n'existe pas`);
-      }
-
-      res.status(200).json(card);
-
-    } catch(error) {
-      console.error(error);
-      res.status(500).json(error);
-    }
-  },
-
-  async modifyCardLocation(req, res) {
-    try {
-      const newLocation = req.body;
-      const { id, index, category } = newLocation;
-
-      // TODO JOI VALIDATION
-      const card = await Card.findOne({ where : { id, userId } });
-
-      if (!card) {
-        return res.status(404).json("Impossible de trouver la carte dans la base");
-      }
-
-      for (const key in newLocation) {
-        if (key) card[key] = newLocation[key];
-      }
-
-      const cardModified = await card.save();
-      if (!cardModified) {
-        throw new Error("Impossible de modifier la carte");
       }
 
       res.status(200).json(card);
@@ -82,6 +59,7 @@ const cardController = {
 
       // New card is created according to the data provided by the user, and userId is set according to the request info containing the user id
       const newCard = await Card.create({ ...newCardInfos, userId });
+
       if (!newCard) {
         throw new Error("Impossible de créer la carte");
       }
@@ -94,10 +72,74 @@ const cardController = {
     }
   },
 
+  async modifyCard(req, res) {
+    try {
+      const { id, ...newInfos } = req.body;
+      const userId = req.user.user.id;
+
+      const dataError = dataValidation(req.body, cardModificationSchema);
+      if (dataError) {
+        return res.status(400).json(dataError);
+      }
+
+      const card = await Card.findOne({ where : { id, userId } });
+
+      if (!card) {
+        return res.status(404).json("Impossible de trouver la carte dans la base");
+      }
+
+      const cardIsModified = await card.update(newInfos);
+
+      if (!cardIsModified) {
+        throw new Error("Impossible de modifier la carte");
+      }
+
+      res.status(200).json(card);
+
+    } catch(error) {
+      console.error(error);
+      res.status(500).json(error);
+    }
+  },
+
+  async moveCard(req, res) {
+    try {
+      const { id, ...newLocation } = req.body;  // newLocation contains index and category
+      const userId = req.user.user.id;
+
+      const dataError = dataValidation(req.body, cardMovingSchema);
+      if (dataError) {
+        return res.status(400).json(dataError);
+      }
+
+      const card = await Card.findOne({ where : { id, userId } });
+
+      if (!card) {
+        return res.status(404).json("Impossible de trouver la carte dans la base");
+      }
+
+      const cardIsModified = await card.update(newLocation);
+      if (!cardIsModified) {
+        throw new Error("Impossible de modifier l'emplacement de la carte");
+      }
+
+      res.status(200).json(card);
+
+    } catch(error) {
+      console.error(error);
+      res.status(500).json(error);
+    }
+  },
+
   async trashOrRestoreCard(req, res) {
     try {
       const { id } = req.body;
       const userId = req.user.user.id;
+
+      const dataError = dataValidation(req.body, cardSelectionSchema);
+      if (dataError) {
+        return res.status(400).json(dataError);
+      }
 
       const card = await Card.findOne({ where : { id, userId } });
 
@@ -128,6 +170,11 @@ const cardController = {
       const { id } = req.body;
       const userId = req.user.user.id;
 
+      const dataError = dataValidation(req.body, cardSelectionSchema);
+      if (dataError) {
+        return res.status(400).json(dataError);
+      }
+
       const card = await Card.findOne({ where : { id, userId } });
 
       if (!card) {
@@ -139,7 +186,7 @@ const cardController = {
         throw new Error("Impossible de supprimer la carte");
       }
 
-      res.status(200).json(card);
+      res.status(200).json('Carte supprimée');
 
     } catch(error) {
       console.error(error);

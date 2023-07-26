@@ -1,6 +1,6 @@
 import { User } from '../models/index.js';
 import jwt from 'jsonwebtoken';
-import { dataValidation, loginSchema, registerSchema, modifyUserSchema } from '../validationSchemas.js';
+import { dataValidation, userLoginSchema, userRegistrationSchema, userModificationSchema } from '../validationSchemas.js';
 
 const userController = {
 
@@ -26,7 +26,7 @@ const userController = {
       const credentials = req.body;
       const { email, password } = credentials;
 
-      const dataError = dataValidation(credentials, loginSchema); // Check if credentials provided are the types of data required
+      const dataError = dataValidation(credentials, userLoginSchema); // Check if credentials provided are the types of data required
       if (dataError) {
         return res.status(400).json(dataError);  // Send the error details
       }
@@ -63,7 +63,7 @@ const userController = {
 
       // TODO chiffrement password
 
-      const dataError = dataValidation(userToRegister, registerSchema);
+      const dataError = dataValidation(userToRegister, userRegistrationSchema);
       if (dataError) {
         return res.status(400).json(dataError);
       }
@@ -74,7 +74,7 @@ const userController = {
       }
 
       const user = await User.create(userToRegister);
-      res.status(201).json(`User ${user} has been created`);
+      res.status(201).json('User has been created');
 
     } catch(error) {
       console.error(error);
@@ -91,7 +91,7 @@ const userController = {
         return res.status(400).json("Aucune information fournie");
       }
 
-      const dataError = dataValidation(infosToModify, modifyUserSchema);
+      const dataError = dataValidation(infosToModify, userModificationSchema);
       if (dataError) {
         return res.status(400).json(dataError.details[0].message);  // Send the error details
       }
@@ -102,22 +102,35 @@ const userController = {
         return res.status(404).json("Impossible de trouver l'utilisateur dans la base");
       }
 
-      // Change the values of the sequelize object to modify the DB
-      for (const key in infosToModify) {
-        if (key) user[key] = infosToModify[key];
-      }
-      // Is equivalent to, if we had destructured req.body
-      // if (email) user.email = email;
-      // if (firstName) user.firstName = firstName;
-      // if (lastName) user.lastName = lastName;
-      // if (address) user.address = address;
-
-      const userModified = await user.save();
-      if (!userModified) {
+      const userIsModified = await user.update(infosToModify);
+      if (!userIsModified) {
         throw new Error("Impossible de modifier les infos utilisateur");
       }
 
       res.status(200).json(user);
+
+    } catch(error) {
+      console.error(error);
+      res.status(500).json(error);
+    }
+  },
+
+  async deleteUser(req, res) {
+    try {
+      const userId = req.user.user.id;
+
+      const user = await User.findByPk(userId);
+
+      if (!user) {
+        return res.status(404).json("Impossible de trouver l'utilisateur dans la base");
+      }
+
+      const userDeleted = await user.destroy();
+      if (!userDeleted) {
+        throw new Error("Impossible de supprimer l'utilisateur");
+      }
+
+      res.status(200).json('Utilisateur supprimé');
 
     } catch(error) {
       console.error(error);
