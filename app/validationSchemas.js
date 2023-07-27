@@ -2,12 +2,12 @@ import Joi from "joi";
 
 // User validation schemas
 
-const userLoginSchema = Joi.object({
+export const userLoginSchema = Joi.object({
   email: Joi.string().email().required(),
   password: Joi.string().min(6).required()
 }).options({ stripUnknown: true });   // This allows to ignore any unknown attributes sent by the user
 
-const userRegistrationSchema = Joi.object({
+export const userRegistrationSchema = Joi.object({
   id: Joi.any().forbidden(),
   email: Joi.string().email().required(),
   password: Joi.string().min(6).required(),
@@ -16,7 +16,7 @@ const userRegistrationSchema = Joi.object({
   lastName: Joi.string().regex(/^[a-zA-ZÀ-ÿ' -]+$/).required()
 }).options({ stripUnknown: true });
 
-const userModificationSchema = Joi.object({
+export const userModificationSchema = Joi.object({
   id: Joi.any().forbidden(),
   email: Joi.string().email(),
   firstName: Joi.string().regex(/^[a-zA-ZÀ-ÿ' -]+$/),
@@ -27,7 +27,7 @@ const userModificationSchema = Joi.object({
 
 // Card validation schemas
 
-const cardCreationSchema = Joi.object({
+export const cardCreationSchema = Joi.object({
   id: Joi.any().forbidden(),
   title: Joi.string(),
   category: Joi.string().valid('Mes offres', 'Mes candidatures', 'Mes relances', 'Mes entretiens'),
@@ -48,7 +48,7 @@ const cardCreationSchema = Joi.object({
   logoUrl: Joi.string().uri()
 }).options({ stripUnknown: true });
 
-const cardModificationSchema = Joi.object({
+export const cardModificationSchema = Joi.object({
   id: Joi.string().uuid().required(),
   title: Joi.string(),
   category: Joi.string().valid('Mes offres', 'Mes candidatures', 'Mes relances', 'Mes entretiens'),
@@ -69,19 +69,46 @@ const cardModificationSchema = Joi.object({
   logoUrl: Joi.string().uri()
 }).options({ stripUnknown: true });
 
-const cardSelectionSchema = Joi.object({
-  id: Joi.string().uuid().required()
-}).options({ stripUnknown: true });
+export const cardSelectionSchema = Joi.string().uuid().required();
 
-const cardMovingSchema = Joi.object({
+export const cardMovingSchema = Joi.object({
   id: Joi.string().uuid().required(),
   index: Joi.number(),
   category: Joi.string().valid('Mes offres', 'Mes candidatures', 'Mes relances', 'Mes entretiens')
 }).options({ stripUnknown: true });
 
 
+// Contact validation schemas
+
+export const contactCreationSchema = Joi.object({
+  id: Joi.any().forbidden(),
+  firstName: Joi.string().regex(/^[a-zA-ZÀ-ÿ' -]+$/).required(),
+  lastName: Joi.string().regex(/^[a-zA-ZÀ-ÿ' -]+$/).required(),
+  occupation: Joi.string(),
+  email: Joi.string().email(),
+  phone: Joi.string().regex(/^(\+|\d{1,3})([\s.-]?\d+)+$/),
+  linkedinProfile: Joi.string().uri(),
+  enterprise: Joi.string(),
+  comments: Joi.string(),
+  color: Joi.string(),
+}).options({ stripUnknown: true });
+
+export const contactModificationSchema = Joi.object({
+  id: Joi.string().uuid().required(),
+  firstName: Joi.string().regex(/^[a-zA-ZÀ-ÿ' -]+$/),
+  lastName: Joi.string().regex(/^[a-zA-ZÀ-ÿ' -]+$/),
+  occupation: Joi.string(),
+  email: Joi.string().email(),
+  phone: Joi.string().regex(/^(\+|\d{1,3})([\s.-]?\d+)+$/),
+  linkedinProfile: Joi.string().uri(),
+  enterprise: Joi.string(),
+  comments: Joi.string(),
+  color: Joi.string(),
+}).options({ stripUnknown: true });
+
+
 // Function used to validate the data types according to data provided by the user and a validation schema
-const dataValidation = (data, schema) => {
+export const dataValidation = (data, schema) => {
     const { error } = schema.validate(data);
 
     if (error) {
@@ -89,5 +116,3 @@ const dataValidation = (data, schema) => {
     }
     return null;
 };
-
-export { dataValidation, userLoginSchema, userRegistrationSchema, userModificationSchema, cardCreationSchema, cardSelectionSchema, cardMovingSchema, cardModificationSchema };

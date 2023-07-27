@@ -35,12 +35,12 @@ const userController = {
         { email: email.toLowerCase() }
       });
       if (!userSearched) {          // If user does not exist in the DB
-        return res.status(404).json(`User ${email} does not exist`);
+        return res.status(401).json(`User ${email} does not exist`);
       }
 
       // TODO : LES PASSWORD DOIVENT ETRE CHIFFRÉS (bcrypt.compare)
       if (userSearched.password !== password) {
-        return res.status(401).json('Incorrect password');
+        return res.status(401).json("Email ou mot de passe est incorrect");
       }
 
       const user = userSearched.get({ plain: true});    // Create a copy of the sequelize object with only the infos needed and removing the password

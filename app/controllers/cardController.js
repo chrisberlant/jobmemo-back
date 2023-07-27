@@ -25,12 +25,13 @@ const cardController = {
       const userId = req.user.user.id;
       const id = req.params.cardId;
 
-      const dataError = dataValidation(req.body, cardSelectionSchema);
+      const dataError = dataValidation(id, cardSelectionSchema);
       if (dataError) {
         return res.status(400).json(dataError);
       }
 
-      const card = await Card.findOne({ where : { id, userId } });
+      const card = await Card.findOne({ where : { id, userId },
+        include: ['contacts', 'documents'] });
 
       if (!card) {
         return res.status(404).json (`La fiche avec l'id ${id} n'existe pas`);

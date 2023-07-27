@@ -3,6 +3,7 @@ const router = Router();
 import userController from './controllers/userController.js';
 import cardController from './controllers/cardController.js';
 import jwtMiddleware from './middlewares/jwtMidleware.js';
+import contactController from './controllers/contactController.js';
 
 
 /* ------------- TESTS ROUTES ------------- */
@@ -24,5 +25,8 @@ router.patch('/trashOrRestoreCard', jwtMiddleware, cardController.trashOrRestore
 router.patch('/modifyCard', jwtMiddleware, cardController.modifyCard);
 router.delete('/deleteCard', jwtMiddleware, cardController.deleteCard);
 
+/* ------------- CONTACTS ROUTES ------------- */
+router.post('/createNewContact', jwtMiddleware, contactController.createNewContact);
+router.patch('/modifyContact', jwtMiddleware, contactController.modifyContact);
 
 export default router;
