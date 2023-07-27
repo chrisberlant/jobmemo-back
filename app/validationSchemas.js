@@ -21,6 +21,7 @@ export const userModificationSchema = Joi.object({
   email: Joi.string().email(),
   firstName: Joi.string().regex(/^[a-zA-ZÀ-ÿ' -]+$/),
   lastName: Joi.string().regex(/^[a-zA-ZÀ-ÿ' -]+$/),
+  avatarUrl: Joi.string().uri(),
   address: Joi.string()
 }).options({ stripUnknown: true });
 

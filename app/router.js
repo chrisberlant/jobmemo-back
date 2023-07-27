@@ -1,10 +1,13 @@
 import { Router } from 'express'
 const router = Router();
+import jwtMiddleware from './middlewares/jwtMidleware.js';
 import userController from './controllers/userController.js';
 import cardController from './controllers/cardController.js';
-import jwtMiddleware from './middlewares/jwtMidleware.js';
 import contactController from './controllers/contactController.js';
-
+import documentController from './controllers/documentController.js';
+// Multer allows to handle form inputs as a body object, and files uploaded as a file object
+// import multer from 'multer';
+// const upload = multer({ dest: 'uploads/' });
 
 /* ------------- TESTS ROUTES ------------- */
 router.get('/', (req, res) => res.send("Hello world"));
@@ -28,5 +31,8 @@ router.delete('/deleteCard', jwtMiddleware, cardController.deleteCard);
 /* ------------- CONTACTS ROUTES ------------- */
 router.post('/createNewContact', jwtMiddleware, contactController.createNewContact);
 router.patch('/modifyContact', jwtMiddleware, contactController.modifyContact);
+
+/* ------------- UPLOAD ROUTES ------------- */
+// router.post('/uploadFile', jwtMiddleware, upload.single('file'), documentController.uploadFile);
 
 export default router;

@@ -105,8 +105,9 @@ const cardController = {
 
   async moveCard(req, res) {
     try {
-      const { id, ...newLocation } = req.body;  // newLocation contains index and category
+      const { id, index, category } = req.body;
       const userId = req.user.user.id;
+      console.log(req.body);
 
       const dataError = dataValidation(req.body, cardMovingSchema);
       if (dataError) {
@@ -119,7 +120,7 @@ const cardController = {
         return res.status(404).json("Impossible de trouver la carte dans la base");
       }
 
-      const cardIsModified = await card.update(newLocation);
+      const cardIsModified = await card.update({ index, category });
       if (!cardIsModified) {
         throw new Error("Impossible de modifier l'emplacement de la carte");
       }

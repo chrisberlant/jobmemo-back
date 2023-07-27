@@ -93,9 +93,10 @@ const userController = {
 
       const dataError = dataValidation(infosToModify, userModificationSchema);
       if (dataError) {
-        return res.status(400).json(dataError.details[0].message);  // Send the error details
+        return res.status(400).json(dataError);
       }
 
+      // console.log(infosToModify);
       const user = await User.findByPk(userId);
 
       if (!user) {

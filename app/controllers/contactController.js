@@ -2,6 +2,26 @@ import { Contact } from "../models/index.js";
 import { dataValidation, contactCreationSchema, contactModificationSchema } from "../validationSchemas.js";
 
 const contactController = {
+
+  async getUserContacts(req, res) {
+    try {
+      const userId = req.user.user.id;
+      const contacts = await Contact.findAll({ where: { userId } });
+
+      if (!contacts) {
+        return res.status(404).json("Can't find contacts");
+      }
+
+      res.status(200).json(contacts);
+
+    } catch(error) {
+      console.error(error);
+      res.status(500).json(error);
+    }
+  },
+
+
+
   async createNewContact(req, res) {
     try {
       const newContactInfos = req.body;
@@ -43,7 +63,6 @@ const contactController = {
       }
 
       const contactIsModified = await contact.update(newInfos);
-
       if (!contactIsModified) {
         throw new Error("Impossible de modifier le contact");
       }
