@@ -4,17 +4,35 @@ import sequelize from '../sequelize-client.js'
 class User extends Model {};
 
 User.init({
+  id: {
+    type: DataTypes.UUID,
+    primaryKey: true,
+    allowNull: false,
+    defaultValue: DataTypes.UUIDV4,
+  },
   email: {
     type: DataTypes.TEXT,
     allowNull: false,
+    unique: true,
   },
-  first_name: DataTypes.TEXT,
-  last_name: DataTypes.TEXT,
+  firstName: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+  },
+  lastName: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+  },
   password: {
     type: DataTypes.TEXT,
     allowNull: false
   },
-  avatar_url: DataTypes.TEXT
+  avatarUrl: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+    defaultValue: '/img/default_avatar.png'
+  },
+  address: DataTypes.TEXT
 }, {
   sequelize,
   tableName: "user"

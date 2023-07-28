@@ -4,31 +4,65 @@ import sequelize from '../sequelize-client.js'
 class Card extends Model {};
 
 Card.init({
+  id: {
+    type: DataTypes.UUID,
+    primaryKey: true,
+    allowNull: false,
+    defaultValue: DataTypes.UUIDV4,
+  },
   title: {
     type: DataTypes.TEXT,
-    allowNull: false
+    allowNull: false,
+    defaultValue: 'Titre de la fiche'
   },
-  category: DataTypes.TEXT,
+  category: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+    defaultValue: 'Mes offres'
+  },
   index: {
     type: DataTypes.INTEGER,
+    allowNull: false,
     defaultValue: 0
   },
-  enterprise_name: DataTypes.TEXT,
-  contract_type: DataTypes.TEXT,
+  enterpriseName: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+    defaultValue: "Nom de l'entreprise",
+  },
+  enterpriseActivity: DataTypes.TEXT,
+  contractType: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+    defaultValue: 'Autre'
+  },
   description: DataTypes.TEXT,
-  offer_url: DataTypes.TEXT,
+  offerUrl: DataTypes.TEXT,
   location: DataTypes.TEXT,
   salary: DataTypes.TEXT,
-  job_title: DataTypes.TEXT,
-  notation: DataTypes.INTEGER,
-  color: DataTypes.TEXT,
-  is_deleted: DataTypes.BOOLEAN,
+  jobTitle: DataTypes.TEXT,
+  notation: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: 1
+  },
+  color: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+    defaultValue: '#fff'
+  },
+  isDeleted: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
+  },
   notes: DataTypes.TEXT,
-  reminder: DataTypes.DATE
+  reminder: DataTypes.DATE,
+  logoUrl: DataTypes.TEXT,
 }, {
   timestamps: true,
-  createdAt: 'created_at',
   updatedAt: false,
+  createdAt: true,
   sequelize,
   tableName: "card"
 });

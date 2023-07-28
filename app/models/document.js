@@ -4,14 +4,26 @@ import sequelize from '../sequelize-client.js'
 class Document extends Model {};
 
 Document.init({
+  id: {
+    type: DataTypes.UUID,
+    primaryKey: true,
+    allowNull: false,
+    defaultValue: DataTypes.UUIDV4,
+  },
   title: {
     type: DataTypes.TEXT,
     allowNull: false,
+    defaultValue: 'Nouveau document'
   },
-  type: DataTypes.TEXT,
+  type: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+    defaultValue: 'Autre'
+  },
   url: {
     type: DataTypes.TEXT,
-    allowNull: false
+    allowNull: false,
+    defaultValue: ''
   }
 }, {
   sequelize,
