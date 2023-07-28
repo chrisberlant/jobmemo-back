@@ -20,7 +20,7 @@ router.patch('/modifyUserInfos', jwtMiddleware, userController.modifyUserInfos);
 router.delete('/deleteUser', jwtMiddleware, userController.deleteUser);
 
 /* ------------- CARDS ROUTES ------------- */
-router.get('/userCards/', jwtMiddleware, cardController.getDashboardCards);
+router.get('/userCards/', jwtMiddleware, cardController.getAllCards);
 router.get('/card/:cardId', jwtMiddleware, cardController.getCardById);
 router.post('/createNewCard', jwtMiddleware, cardController.createNewCard);
 router.patch('/moveCard', jwtMiddleware, cardController.moveCard);

@@ -3,7 +3,7 @@ import { dataValidation, cardCreationSchema, cardSelectionSchema, cardMovingSche
 
 const cardController = {
 
-  async getDashboardCards(req, res) {
+  async getAllCards(req, res) {
     try {
       const userId = req.user.user.id;
       const cards = await Card.findAll({ where: { userId } });
@@ -107,7 +107,6 @@ const cardController = {
     try {
       const { id, index, category } = req.body;
       const userId = req.user.user.id;
-      console.log(req.body);
 
       const dataError = dataValidation(req.body, cardMovingSchema);
       if (dataError) {
