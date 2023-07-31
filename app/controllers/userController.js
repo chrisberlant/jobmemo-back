@@ -45,6 +45,7 @@ const userController = {
 
       const user = userSearched.get({ plain: true});    // Create a copy of the sequelize object with only the infos needed and removing the password
       delete user.password;
+      console.log(user);
       //On déclare une variable qui contiendra notre token qu'on enverra vers le front(jwt.sign({nosInfos}, SECRET_KEY))
       //TODO : VERIFIER LES INFOS ESSENTIELLES (id user, email ?);
       const token = jwt.sign({ user }, process.env.SECRET_KEY);
@@ -70,10 +71,14 @@ const userController = {
 
       const alreadyExistingUser = await User.findOne({ where: { email } }); // Check if user already exists
       if (alreadyExistingUser) {
-        return res.status(401).json('This email address is already in use');
+        return res.status(401).json("Une erreur s'est produite");
       }
 
       const user = await User.create(userToRegister);
+      if (!user) {
+        throw new Error("Impossible de créer l'utilisateur");
+      }
+
       res.status(201).json('User has been created');
 
     } catch(error) {

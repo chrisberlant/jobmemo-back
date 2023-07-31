@@ -1,4 +1,5 @@
 import { Card } from '../models/index.js';
+import { Op } from 'sequelize';
 import { dataValidation, cardCreationSchema, cardSelectionSchema, cardMovingSchema, cardModificationSchema } from '../validationSchemas.js';
 
 const cardController = {
@@ -117,6 +118,37 @@ const cardController = {
 
       if (!card) {
         return res.status(404).json("Impossible de trouver la carte dans la base");
+      }
+
+      const oldCategory = card.category;    // Get the original category and index of the moving card
+      const oldIndex = card.index;
+
+      const oldCategoryCardsChangedIndex = await Card.findAll({ where : { userId, category: oldCategory,   // Get cards from the old category
+        index : {
+          [Op.gt]: oldIndex     // Every card with index > the index where the card was moved from
+        }
+      } });
+
+      const newCategoryCardsChangedIndex = await Card.findAll({ where : { userId, category,     // Get cards from the new category
+        index : {
+          [Op.gte]: index     // Every card with index >= the index where the card is moved
+        }
+      } });
+
+      if (oldCategoryCardsChangedIndex) {
+        for (const card of oldCategoryCardsChangedIndex) {        // Decrement the other cards' index in the old category
+          card.index--;
+          const indexChanged = await card.save();
+          if (!indexChanged) throw new Error("Impossible de modifier l'index de toutes les cartes de l'ancienne catégorie");
+        };
+      }
+
+      if (newCategoryCardsChangedIndex) {
+        for (const card of newCategoryCardsChangedIndex) {      // Increment the other cards' index in the new category
+          card.index++;
+          const indexChanged = await card.save();
+          if (!indexChanged) throw new Error("Impossible de modifier l'index de toutes les cartes de la nouvelle catégorie");
+        };
       }
 
       const cardIsModified = await card.update({ index, category });
