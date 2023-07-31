@@ -233,8 +233,8 @@ const cardController = {
         return res.status(404).json("Impossible de trouver la fiche dans la base");
 
 
-      const cardDeleted = await card.destroy();
-      if (!cardDeleted)
+      const cardIsDeleted = await card.destroy();
+      if (!cardIsDeleted)
         throw new Error("Impossible de supprimer la fiche");
 
       res.status(200).json('Fiche supprimée');

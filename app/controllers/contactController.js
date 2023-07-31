@@ -1,5 +1,5 @@
 import { Contact } from "../models/index.js";
-import { dataValidation, contactCreationSchema, contactModificationSchema } from "../validationSchemas.js";
+import { dataValidation, contactCreationSchema, contactModificationSchema, contactSelectionSchema } from "../validationSchemas.js";
 
 const contactController = {
 
@@ -57,7 +57,7 @@ const contactController = {
 
       const contactIsModified = await contact.update(newInfos);
       if (!contactIsModified)
-        throw new Error("Impossible de modifier le contact");
+        throw new Error('Impossible de modifier le contact');
 
       res.status(200).json(contact);
 
@@ -66,6 +66,32 @@ const contactController = {
       res.status(500).json(error);
     }
   },
+
+  async deleteContact(req, res) {
+    try {
+      const { id } = req.body;
+      const userId = req.user.user.id;
+
+      const dataError = dataValidation(req.body, contactSelectionSchema);
+      if (dataError)
+        return res.status(400).json(dataError);
+
+      const contact = await Contact.findOne({ where: { id, userId } });
+      if (!contact)
+        return res.status(404).json("Impossible de trouver le contact dans la base");
+
+      const contactIsDeleted = await contact.destroy();
+      if (!contactIsDeleted)
+        throw new Error('Impossible de supprimer le contact');
+
+      res.status(200).json('Contact supprimé');
+
+    } catch(error) {
+      console.error(error);
+      res.status(500).json(error);
+    }
+  }
+
 }
 
 export default contactController;

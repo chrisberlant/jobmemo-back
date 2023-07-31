@@ -31,6 +31,7 @@ router.delete('/deleteCard', jwtMiddleware, cardController.deleteCard);
 /* ------------- CONTACTS ROUTES ------------- */
 router.post('/createNewContact', jwtMiddleware, contactController.createNewContact);
 router.patch('/modifyContact', jwtMiddleware, contactController.modifyContact);
+router.delete('/deleteContact', jwtMiddleware, contactController.deleteContact);
 
 /* ------------- UPLOAD ROUTES ------------- */
 // router.post('/uploadFile', jwtMiddleware, upload.single('file'), documentController.uploadFile);

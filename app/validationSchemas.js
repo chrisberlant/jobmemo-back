@@ -109,6 +109,10 @@ export const contactModificationSchema = Joi.object({
   color: Joi.string(),
 }).options({ stripUnknown: true });
 
+export const contactSelectionSchema = Joi.object({
+  id: Joi.string().uuid().required()
+}).options({ stripUnknown: true });
+
 
 // Function used to validate the data types according to data provided by the user and a validation schema
 export const dataValidation = (data, schema) => {

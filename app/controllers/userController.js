@@ -116,8 +116,8 @@ const userController = {
       if (!user)
         return res.status(404).json("Impossible de trouver l'utilisateur dans la base");
 
-      const userDeleted = await user.destroy();
-      if (!userDeleted)
+      const userIsDeleted = await user.destroy();
+      if (!userIsDeleted)
         throw new Error("Impossible de supprimer l'utilisateur");
 
       res.status(200).json('Utilisateur supprimé');
