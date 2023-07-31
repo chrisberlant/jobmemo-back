@@ -32,7 +32,7 @@ export const cardCreationSchema = Joi.object({
   id: Joi.any().forbidden(),
   title: Joi.string(),
   category: Joi.string().valid('Mes offres', 'Mes candidatures', 'Mes relances', 'Mes entretiens'),
-  index: Joi.number(),
+  index: Joi.number().min(0),
   enterpriseName : Joi.string(),
   enterpriseActivity : Joi.string(),
   contractType: Joi.string().valid('CDI', 'CDD', 'Alternance', 'Autre'),
@@ -43,10 +43,10 @@ export const cardCreationSchema = Joi.object({
   jobTitle: Joi.string(),
   notation: Joi.number(),
   color: Joi.string(),
-  isDeleted: Joi.boolean(),
   notes: Joi.string(),
   reminder: Joi.date(),
-  logoUrl: Joi.string().uri()
+  logoUrl: Joi.string().uri(),
+  userId: Joi.any().forbidden()
 }).options({ stripUnknown: true });
 
 export const cardModificationSchema = Joi.object({
@@ -64,20 +64,22 @@ export const cardModificationSchema = Joi.object({
   jobTitle: Joi.string(),
   notation: Joi.number(),
   color: Joi.string(),
-  isDeleted: Joi.boolean(),
+  isDeleted: Joi.any().forbidden(),
   notes: Joi.string(),
   reminder: Joi.date(),
-  logoUrl: Joi.string().uri()
+  logoUrl: Joi.string().uri(),
+  userId: Joi.any().forbidden()
 }).options({ stripUnknown: true });
 
 export const cardSelectionSchema = Joi.object({
-  id: Joi.string().uuid().required()
+  id: Joi.string().uuid().required(),
 }).options({ stripUnknown: true });
 
 export const cardMovingSchema = Joi.object({
   id: Joi.string().uuid().required(),
   index: Joi.number().min(0),
-  category: Joi.string().valid('Mes offres', 'Mes candidatures', 'Mes relances', 'Mes entretiens')
+  category: Joi.string().valid('Mes offres', 'Mes candidatures', 'Mes relances', 'Mes entretiens'),
+  userId: Joi.any().forbidden(),
 }).options({ stripUnknown: true });
 
 
@@ -94,6 +96,7 @@ export const contactCreationSchema = Joi.object({
   enterprise: Joi.string(),
   comments: Joi.string(),
   color: Joi.string(),
+  userId: Joi.any().forbidden()
 }).options({ stripUnknown: true });
 
 export const contactModificationSchema = Joi.object({
@@ -107,6 +110,7 @@ export const contactModificationSchema = Joi.object({
   enterprise: Joi.string(),
   comments: Joi.string(),
   color: Joi.string(),
+  userId: Joi.any().forbidden()
 }).options({ stripUnknown: true });
 
 export const contactSelectionSchema = Joi.object({

@@ -203,13 +203,15 @@ const cardController = {
       card.isDeleted = !card.isDeleted;
 
       // When sending card to trash, assign a random index between 1000 and 9999
-      // So when the card is restored, it will go directly to the end of the category without creating a duplicate index
+      // So when the card is restored, it will go directly to the end of the category without risking to create a duplicate index
       if (card.isDeleted)
         card.index = Math.floor(Math.random() * 9000) + 1000;
 
       const cardTrashedOrRestored = await card.save();
-      if (!cardTrashedOrRestored && card.isDeleted === true) throw new Error("Impossible d'ajouter la fiche dans la corbeille");
-      if (!cardTrashedOrRestored) throw new Error("Impossible de restaurer la fiche depuis la corbeille");
+      if (!cardTrashedOrRestored && card.isDeleted === true)
+        throw new Error("Impossible d'ajouter la fiche dans la corbeille");
+      if (!cardTrashedOrRestored)
+        throw new Error("Impossible de restaurer la fiche depuis la corbeille");
 
       res.status(200).json(card);
 
