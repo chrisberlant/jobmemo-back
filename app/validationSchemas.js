@@ -70,7 +70,9 @@ export const cardModificationSchema = Joi.object({
   logoUrl: Joi.string().uri()
 }).options({ stripUnknown: true });
 
-export const cardSelectionSchema = Joi.string().uuid().required();
+export const cardSelectionSchema = Joi.object({
+  id: Joi.string().uuid().required()
+}).options({ stripUnknown: true });
 
 export const cardMovingSchema = Joi.object({
   id: Joi.string().uuid().required(),

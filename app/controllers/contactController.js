@@ -6,11 +6,10 @@ const contactController = {
   async getUserContacts(req, res) {
     try {
       const userId = req.user.user.id;
-      const contacts = await Contact.findAll({ where: { userId } });
 
-      if (!contacts) {
+      const contacts = await Contact.findAll({ where: { userId } });
+      if (!contacts)
         return res.status(404).json("Can't find contacts");
-      }
 
       res.status(200).json(contacts);
 
@@ -20,23 +19,19 @@ const contactController = {
     }
   },
 
-
-
   async createNewContact(req, res) {
     try {
       const newContactInfos = req.body;
       const userId = req.user.user.id;
 
       const dataError = dataValidation(newContactInfos, contactCreationSchema);
-      if (dataError) {
+      if (dataError)
         return res.status(400).json(dataError);
-      }
 
       const newContact = await Contact.create({ ...newContactInfos, userId });
 
-      if (!newContact) {
+      if (!newContact)
         throw new Error("Impossible de créer le contact");
-      }
 
       res.status(201).json(newContact);
 
@@ -52,20 +47,17 @@ const contactController = {
       const userId = req.user.user.id;
 
       const dataError = dataValidation(req.body, contactModificationSchema);
-      if (dataError) {
+      if (dataError)
         return res.status(400).json(dataError);
-      }
 
       const contact = await Contact.findOne({ where : { id, userId } });
 
-      if (!contact) {
+      if (!contact)
         return res.status(404).json("Impossible de trouver le contact dans la base");
-      }
 
       const contactIsModified = await contact.update(newInfos);
-      if (!contactIsModified) {
+      if (!contactIsModified)
         throw new Error("Impossible de modifier le contact");
-      }
 
       res.status(200).json(contact);
 
