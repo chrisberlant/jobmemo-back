@@ -31,7 +31,7 @@ export const userModificationSchema = Joi.object({
 export const cardCreationSchema = Joi.object({
   id: Joi.any().forbidden(),
   title: Joi.string(),
-  category: Joi.string().valid('"Mes offres"', '"Mes candidatures"', '"Mes relances"', '"Mes entretiens"'),
+  category: Joi.string().valid('Mes offres', 'Mes candidatures', 'Mes relances', 'Mes entretiens'),
   index: Joi.number().min(0),
   enterpriseName : Joi.string(),
   enterpriseActivity : Joi.string(),
