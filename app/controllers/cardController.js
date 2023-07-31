@@ -1,5 +1,6 @@
 import { Card } from '../models/index.js';
 import { Op } from 'sequelize';
+import sequelize from './../sequelize-client.js';
 import { dataValidation, cardCreationSchema, cardSelectionSchema, cardMovingSchema, cardModificationSchema } from '../validationSchemas.js';
 
 const cardController = {
@@ -120,43 +121,86 @@ const cardController = {
         return res.status(404).json("Impossible de trouver la carte dans la base");
       }
 
-      const oldCategory = card.category;    // Get the original category and index of the moving card
+      // Get the original category and index of the moving card
+      const oldCategory = card.category;
       const oldIndex = card.index;
 
-      const oldCategoryCardsChangedIndex = await Card.findAll({ where : { userId, category: oldCategory,   // Get cards from the old category
-        index : {
-          [Op.gt]: oldIndex     // Every card with index > the index where the card was moved from
-        }
-      } });
+      console.log("Ancienne catégorie : " + oldCategory);
+      console.log("Nouvelle catégorie : " + category);
 
-      const newCategoryCardsChangedIndex = await Card.findAll({ where : { userId, category,     // Get cards from the new category
-        index : {
-          [Op.gte]: index     // Every card with index >= the index where the card is moved
-        }
-      } });
+      // Create a new sequelize transaction to optimize the amount of queries done to the DB
+      // It allows us to cancel everything if one the operations failed, preventing index duplicates in the DB
+      const indexChangesTransaction = await sequelize.transaction();
 
-      if (oldCategoryCardsChangedIndex) {
-        for (const card of oldCategoryCardsChangedIndex) {        // Decrement the other cards' index in the old category
-          card.index--;
-          const indexChanged = await card.save();
-          if (!indexChanged) throw new Error("Impossible de modifier l'index de toutes les cartes de l'ancienne catégorie");
-        };
+      try {
+        console.log("Requête reçue");
+        await Card.increment({ index: -1 }, {   // Decrement index of the card
+          where: {
+            userId,
+            category: oldCategory,   // If it belongs to the old category
+            index : { [Op.gt]: oldIndex }         // And its index > the card's old index in the old category
+          },
+          transaction: indexChangesTransaction
+        });
+
+        await Card.increment({ index: 1 }, {   // Increment index of the card
+          where: {
+            userId,
+            category,                // If it belongs to the new category
+            index : { [Op.gte]: index }         // And its index >= the card's index in the new category
+          },
+          transaction: indexChangesTransaction
+        });
+
+        await card.update({ index, category }, { transaction: indexChangesTransaction });
+
+
+        await indexChangesTransaction.commit();   // Execute the whole transaction
+
+        res.status(200).json(card);
+
+      } catch(error) {
+        await indexChangesTransaction.rollback();   // Cancel the whole transaction
+        throw new Error('Impossible de déplacer la carte');
       }
 
-      if (newCategoryCardsChangedIndex) {
-        for (const card of newCategoryCardsChangedIndex) {      // Increment the other cards' index in the new category
-          card.index++;
-          const indexChanged = await card.save();
-          if (!indexChanged) throw new Error("Impossible de modifier l'index de toutes les cartes de la nouvelle catégorie");
-        };
-      }
 
-      const cardIsModified = await card.update({ index, category });
-      if (!cardIsModified) {
-        throw new Error("Impossible de modifier l'emplacement de la carte");
-      }
+      // Unoptimizd queries without transaction would be
 
-      res.status(200).json(card);
+      // const oldCategoryCards = await Card.findAll({ where : { userId, category: oldCategory,   // Get cards from the old category
+      //   index : {
+      //     [Op.gt]: oldIndex     // Every card with index > the index where the card was moved from
+      //   }
+      // } });
+
+      // const newCategoryCards = await Card.findAll({ where : { userId, category,     // Get cards from the new category
+      //   index : {
+      //     [Op.gte]: index     // Every card with index >= the index where the card is moved
+      //   }
+      // } });
+
+      // if (oldCategoryCards) {
+      //   for (const card of oldCategoryCards) {        // Decrement the other cards' index in the old category
+      //     card.index--;
+      //     const indexChanged = await card.save();
+      //     if (!indexChanged) throw new Error("Impossible de modifier l'index de toutes les cartes de l'ancienne catégorie");
+      //   };
+      // }
+
+      // if (newCategoryCards) {
+      //   for (const card of newCategoryCards) {      // Increment the other cards' index in the new category
+      //     card.index++;
+      //     const indexChanged = await card.save();
+      //     if (!indexChanged) throw new Error("Impossible de modifier l'index de toutes les cartes de la nouvelle catégorie");
+      //   };
+      // }
+
+      // const cardIsModified = await card.update({ index, category });
+      // if (!cardIsModified) {
+      //   throw new Error("Impossible de modifier l'emplacement de la carte");
+      // }
+
+      // res.status(200).json(card);
 
     } catch(error) {
       console.error(error);

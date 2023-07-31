@@ -53,7 +53,7 @@ export const cardModificationSchema = Joi.object({
   id: Joi.string().uuid().required(),
   title: Joi.string(),
   category: Joi.string().valid('Mes offres', 'Mes candidatures', 'Mes relances', 'Mes entretiens'),
-  index: Joi.number(),
+  index: Joi.any().forbidden(),
   enterpriseName : Joi.string(),
   enterpriseActivity : Joi.string(),
   contractType: Joi.string().valid('CDI', 'CDD', 'Alternance', 'Autre'),
@@ -74,7 +74,7 @@ export const cardSelectionSchema = Joi.string().uuid().required();
 
 export const cardMovingSchema = Joi.object({
   id: Joi.string().uuid().required(),
-  index: Joi.number(),
+  index: Joi.number().min(0),
   category: Joi.string().valid('Mes offres', 'Mes candidatures', 'Mes relances', 'Mes entretiens')
 }).options({ stripUnknown: true });
 
