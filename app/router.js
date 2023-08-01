@@ -33,12 +33,13 @@ router.patch('/trashOrRestoreCard', jwtMiddleware, dataValidation(cardSelectionS
 router.delete('/deleteCard', jwtMiddleware, dataValidation(cardSelectionSchema), cardController.deleteCard);
 
 /* ------------- CONTACTS ROUTES ------------- */
-router.get('userContacts', jwtMiddleware, contactController.getUserContacts);
+router.get('/userContacts', jwtMiddleware, contactController.getUserContacts);
 router.post('/createNewContact', jwtMiddleware, dataValidation(contactCreationSchema), contactController.createNewContact);
 router.patch('/modifyContact', jwtMiddleware, dataValidation(contactModificationSchema), contactController.modifyContact);
 router.delete('/deleteContact', jwtMiddleware, dataValidation(contactSelectionSchema), contactController.deleteContact);
 
-/* ------------- UPLOAD ROUTES ------------- */
+/* ------------- DOCUMENTS ROUTES ------------- */
 // router.post('/uploadFile', jwtMiddleware, upload.single('file'), documentController.uploadFile);
+router.get('/userDocuments', jwtMiddleware, documentController.getUserDocuments);
 
 export default router;

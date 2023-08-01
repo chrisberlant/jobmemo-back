@@ -46,7 +46,7 @@ const contactController = {
       if (!contact)
         return res.status(404).json("Impossible de trouver le contact dans la base");
 
-      const contactIsModified = await contact.update(newInfos);
+      const contactIsModified = await contact.update({ ...newInfos });
       if (!contactIsModified)
         throw new Error('Impossible de modifier le contact');
 

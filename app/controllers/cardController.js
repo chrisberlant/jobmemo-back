@@ -65,7 +65,7 @@ const cardController = {
       if (!card)
         return res.status(404).json("Impossible de trouver la fiche dans la base");
 
-      const cardIsModified = await card.update(newInfos);
+      const cardIsModified = await card.update({ ...newInfos });
       if (!cardIsModified)
         throw new Error("Impossible de modifier la fiche");
 
