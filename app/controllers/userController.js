@@ -1,6 +1,5 @@
 import { User } from '../models/index.js';
 import jwt from 'jsonwebtoken';
-import { dataValidation, userLoginSchema, userRegistrationSchema, userModificationSchema } from '../validationSchemas.js';
 
 const userController = {
 
@@ -25,10 +24,6 @@ const userController = {
       const credentials = req.body;
       const { email, password } = credentials;
 
-      const dataError = dataValidation(credentials, userLoginSchema); // Check if credentials provided are the types of data required
-      if (dataError)
-        return res.status(400).json(dataError);  // Send the error details
-
       const userSearched = await User.findOne({ where:    // Find user in DB
         { email: email.toLowerCase() }
       });
@@ -39,8 +34,8 @@ const userController = {
       if (userSearched.password !== password)
         return res.status(401).json("Email ou mot de passe est incorrect");
 
-      const user = userSearched.get({ plain: true});    // Create a copy of the sequelize object with only the infos needed and removing the password
-      delete user.password;
+      const user = userSearched.get({ plain: true});    // Create a copy of the sequelize object with only the infos needed
+      delete user.password;       // removing the password before using the object
 
       //TODO : VERIFIER LES INFOS ESSENTIELLES (id user, email ?);
       // We set a variable containing the token that will be sent to the front-end
@@ -56,13 +51,9 @@ const userController = {
   async register(req, res) {
     try {
       const userToRegister = req.body;
-      const { email, password, confirmPassword } = userToRegister;
+      const { email, password } = userToRegister;
 
       // TODO chiffrement password
-
-      const dataError = dataValidation(userToRegister, userRegistrationSchema);
-      if (dataError)
-        return res.status(400).json(dataError);
 
       const alreadyExistingUser = await User.findOne({ where: { email } }); // Check if user already exists
       if (alreadyExistingUser)
@@ -88,19 +79,15 @@ const userController = {
       if (Object.keys(infosToModify).length === 0)  // If no data were provided by the user
         return res.status(400).json("Aucune information fournie");
 
-      const dataError = dataValidation(infosToModify, userModificationSchema);
-      if (dataError)
-        return res.status(400).json(dataError);
-
       const user = await User.findByPk(userId);
       if (!user)
         return res.status(404).json("Impossible de trouver l'utilisateur dans la base");
 
-      const userIsModified = await user.update(infosToModify);
+      const userIsModified = await user.update({ ...infosToModify });
       if (!userIsModified)
         throw new Error("Impossible de modifier les infos utilisateur");
 
-      res.status(200).json(user);
+      res.status(200).json(infosToModify);
 
     } catch(error) {
       console.error(error);

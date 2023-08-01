@@ -1,5 +1,4 @@
 import { Contact } from "../models/index.js";
-import { dataValidation, contactCreationSchema, contactModificationSchema, contactSelectionSchema } from "../validationSchemas.js";
 
 const contactController = {
 
@@ -24,10 +23,6 @@ const contactController = {
       const newContactInfos = req.body;
       const userId = req.user.user.id;
 
-      const dataError = dataValidation(newContactInfos, contactCreationSchema);
-      if (dataError)
-        return res.status(400).json(dataError);
-
       const newContact = await Contact.create({ ...newContactInfos, userId });
 
       if (!newContact)
@@ -45,10 +40,6 @@ const contactController = {
     try {
       const { id, ...newInfos } = req.body;
       const userId = req.user.user.id;
-
-      const dataError = dataValidation(req.body, contactModificationSchema);
-      if (dataError)
-        return res.status(400).json(dataError);
 
       const contact = await Contact.findOne({ where : { id, userId } });
 
@@ -71,10 +62,6 @@ const contactController = {
     try {
       const { id } = req.body;
       const userId = req.user.user.id;
-
-      const dataError = dataValidation(req.body, contactSelectionSchema);
-      if (dataError)
-        return res.status(400).json(dataError);
 
       const contact = await Contact.findOne({ where: { id, userId } });
       if (!contact)

@@ -1,7 +1,6 @@
 import { Card } from '../models/index.js';
 import { Op } from 'sequelize';
 import sequelize from './../sequelize-client.js';
-import { dataValidation, cardCreationSchema, cardSelectionSchema, cardMovingSchema, cardModificationSchema } from '../validationSchemas.js';
 
 const cardController = {
 
@@ -24,11 +23,7 @@ const cardController = {
   async getCardById(req, res) {
     try {
       const userId = req.user.user.id;
-      const id = req.params.cardId;
-
-      const dataError = dataValidation(id, cardSelectionSchema);
-      if (dataError)
-        return res.status(400).json(dataError);
+      const id = req.params.id;
 
       const card = await Card.findOne({ where : { id, userId },
         include: ['contacts', 'documents'] });
@@ -45,17 +40,10 @@ const cardController = {
 
   async createNewCard(req, res) {
     try {
-      // We do not need to destructurate here
-      // const { title, category, index, enterpriseName, enterpriseActivity, contractType, description,
-      //   offerUrl, location, salary, jobTitle, notation, color, isDeleted, notes, reminder, logoUrl } = req.body;
-      const newCardInfos = req.body;
+      const newCardInfos = req.body;  // Contains all the form values provided by the user
       const userId = req.user.user.id;
 
-      const dataError = dataValidation(newCardInfos, cardCreationSchema);
-      if (dataError)
-        return res.status(400).json(dataError);
-
-      // New card is created according to the data provided by the user, and userId is set according to the request info containing the user id
+      // New card is created according to the data provided by the user, and userId is set according to the request info
       const newCard = await Card.create({ ...newCardInfos, userId });
       if (!newCard)
         throw new Error("Impossible de créer la fiche");
@@ -72,10 +60,6 @@ const cardController = {
     try {
       const { id, ...newInfos } = req.body;
       const userId = req.user.user.id;
-
-      const dataError = dataValidation(req.body, cardModificationSchema);
-      if (dataError)
-        return res.status(400).json(dataError);
 
       const card = await Card.findOne({ where : { id, userId } });
       if (!card)
@@ -98,10 +82,6 @@ const cardController = {
       const { id, index, category } = req.body;
       const userId = req.user.user.id;
 
-      const dataError = dataValidation(req.body, cardMovingSchema);
-      if (dataError)
-        return res.status(400).json(dataError);
-
       const card = await Card.findOne({ where : { id, userId } });
       if (!card)
         return res.status(404).json("Impossible de trouver la fiche dans la base");
@@ -115,7 +95,8 @@ const cardController = {
       const indexChangesTransaction = await sequelize.transaction();
 
       try {
-        await Card.increment({ index: -1 }, {   // Decrement index of the card
+        // We will change the indexes of the other cards moved on the dashboard
+        await Card.decrement({ index: 1 }, {   // Decrement index of the card
           where: {
             userId,
             category: oldCategory,   // If it belongs to the old category
@@ -133,6 +114,7 @@ const cardController = {
           transaction: indexChangesTransaction
         });
 
+        // Change the index and category (if needed) of the moving card
         await card.update({ index, category }, { transaction: indexChangesTransaction });
 
         await indexChangesTransaction.commit();   // Execute the whole transaction
@@ -144,43 +126,6 @@ const cardController = {
         throw new Error('Impossible de déplacer la fiche');
       }
 
-      // Unoptimizd queries without transaction would be
-
-      // const oldCategoryCards = await Card.findAll({ where : { userId, category: oldCategory,   // Get cards from the old category
-      //   index : {
-      //     [Op.gt]: oldIndex     // Every card with index > the index where the card was moved from
-      //   }
-      // } });
-
-      // const newCategoryCards = await Card.findAll({ where : { userId, category,     // Get cards from the new category
-      //   index : {
-      //     [Op.gte]: index     // Every card with index >= the index where the card is moved
-      //   }
-      // } });
-
-      // if (oldCategoryCards) {
-      //   for (const card of oldCategoryCards) {        // Decrement the other cards' index in the old category
-      //     card.index--;
-      //     const indexChanged = await card.save();
-      //     if (!indexChanged) throw new Error("Impossible de modifier l'index de toutes les fiches de l'ancienne catégorie");
-      //   };
-      // }
-
-      // if (newCategoryCards) {
-      //   for (const card of newCategoryCards) {      // Increment the other cards' index in the new category
-      //     card.index++;
-      //     const indexChanged = await card.save();
-      //     if (!indexChanged) throw new Error("Impossible de modifier l'index de toutes les fiches de la nouvelle catégorie");
-      //   };
-      // }
-
-      // const cardIsModified = await card.update({ index, category });
-      // if (!cardIsModified) {
-      //   throw new Error("Impossible de modifier l'emplacement de la fiche");
-      // }
-
-      // res.status(200).json(card);
-
     } catch(error) {
       console.error(error);
       res.status(500).json(error);
@@ -191,10 +136,6 @@ const cardController = {
     try {
       const { id } = req.body;
       const userId = req.user.user.id;
-
-      const dataError = dataValidation(req.body, cardSelectionSchema);
-      if (dataError)
-        return res.status(400).json(dataError);
 
       const card = await Card.findOne({ where : { id, userId } });
       if (!card)
@@ -226,14 +167,9 @@ const cardController = {
       const { id } = req.body;
       const userId = req.user.user.id;
 
-      const dataError = dataValidation(req.body, cardSelectionSchema);
-      if (dataError)
-        return res.status(400).json(dataError);
-
       const card = await Card.findOne({ where : { id, userId } });
       if (!card)
         return res.status(404).json("Impossible de trouver la fiche dans la base");
-
 
       const cardIsDeleted = await card.destroy();
       if (!cardIsDeleted)
