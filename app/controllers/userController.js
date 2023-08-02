@@ -1,23 +1,8 @@
 import { User } from '../models/index.js';
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 
 const userController = {
-
-  // Used as test only
-  async getAllUsers(req, res) {
-    try {
-      const users = await User.findAll();
-
-      if (!users)
-        return res.status(404).json("Can't find users");
-
-      res.status(200).json(users);
-
-    } catch (error) {
-      console.error(error);
-      res.status(500).json(error);
-    }
-  },
 
   async login(req, res) {
     try {
@@ -30,11 +15,12 @@ const userController = {
       if (!userSearched) // If user cannot be found
         return res.status(401).json(`User ${email} does not exist`);
 
-      // TODO : LES PASSWORD DOIVENT ETRE CHIFFRÉS (bcrypt.compare)
-      if (userSearched.password !== password)
-        return res.status(401).json("Email ou mot de passe est incorrect");
+      // Hashing the password provided by the user to compare it with the one in the DB
+      const passwordsMatch = await bcrypt.compare(password, userSearched.password);
+      if (!passwordsMatch)
+        return res.status(401).json("Email ou mot de passe incorrect");
 
-      const user = userSearched.get({ plain: true});    // Create a copy of the sequelize object with only the infos needed
+      const user = userSearched.get({ plain: true });    // Create a copy of the sequelize object with only the infos needed
       delete user.password;       // removing the password before using the object
 
       //TODO : VERIFIER LES INFOS ESSENTIELLES (id user, email ?);
@@ -53,13 +39,14 @@ const userController = {
       const userToRegister = req.body;
       const { email, password } = userToRegister;
 
-      // TODO chiffrement password
+      const saltRounds = parseInt(process.env.SALT_ROUNDS);
+      const hashedPassword = await bcrypt.hash(password, saltRounds); // Hashing the password provided by the user
 
       const alreadyExistingUser = await User.findOne({ where: { email } }); // Check if user already exists
       if (alreadyExistingUser)
         return res.status(401).json("Une erreur s'est produite");
 
-      const user = await User.create(userToRegister);
+      const user = await User.create({ ...userToRegister, password: hashedPassword });
       if (!user)
         throw new Error("Impossible de créer l'utilisateur");
 
@@ -75,6 +62,7 @@ const userController = {
     try {
       const userId = req.user.user.id;
       const infosToModify = req.body;
+      const { password } = infosToModify;
 
       if (Object.keys(infosToModify).length === 0)  // If no data were provided by the user
         return res.status(400).json("Aucune information fournie");
@@ -82,6 +70,12 @@ const userController = {
       const user = await User.findByPk(userId);
       if (!user)
         return res.status(404).json("Impossible de trouver l'utilisateur dans la base");
+
+      // TODO hashedPassword
+      if (password) {
+        const saltRounds = parseInt(process.env.SALT_ROUNDS);
+        infosToModify.password = await bcrypt.hash(password, saltRounds);
+      }
 
       const userIsModified = await user.update({ ...infosToModify });
       if (!userIsModified)

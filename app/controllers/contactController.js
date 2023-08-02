@@ -77,7 +77,24 @@ const contactController = {
       console.error(error);
       res.status(500).json(error);
     }
-  }
+  },
+
+  async getContactById(req, res) {
+    try {
+      const userId = req.user.user.id;
+      const id = req.params.id;
+
+      const contact = await Contact.findOne({ where : { id, userId } });
+      if (!contact)
+        return res.status(404).json (`Le contact avec l'id ${id} n'existe pas`);
+
+      res.status(200).json(contact);
+
+    } catch(error) {
+      console.error(error);
+      res.status(500).json(error);
+    }
+  },
 
 }
 

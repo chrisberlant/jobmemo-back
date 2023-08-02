@@ -1,5 +1,10 @@
 import Joi from "joi";
 
+// Schema used to select anything using its id
+export const selectionSchema = Joi.object({
+  id: Joi.string().uuid().required(),
+});
+
 // User validation schemas
 
 export const userLoginSchema = Joi.object({
@@ -66,10 +71,6 @@ export const cardModificationSchema = Joi.object({
   logoUrl: Joi.string().uri(),
 });
 
-export const cardSelectionSchema = Joi.object({
-  id: Joi.string().uuid().required(),
-});
-
 export const cardMovingSchema = Joi.object({
   id: Joi.string().uuid().required(),
   index: Joi.number().min(0),
@@ -103,7 +104,3 @@ export const contactModificationSchema = Joi.object({
   comments: Joi.string(),
   color: Joi.string(),
 });
-
-export const contactSelectionSchema = Joi.object({
-  id: Joi.string().uuid().required()
-}).options({ stripUnknown: true });
