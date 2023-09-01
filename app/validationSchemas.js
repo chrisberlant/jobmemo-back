@@ -27,29 +27,28 @@ export const userModificationSchema = Joi.object({
   password: Joi.string().min(6),
   confirmPassword: Joi.string().valid(Joi.ref('password')),
   avatarUrl: Joi.string().uri(),
-  address: Joi.string()
+  address: Joi.string().allow('')
 });
 
 
 // Card validation schemas
 
 export const cardCreationSchema = Joi.object({
-  title: Joi.string(),
-  category: Joi.string().valid('Mes offres', 'Mes candidatures', 'Mes relances', 'Mes entretiens'),
-  index: Joi.number().min(0),
-  enterpriseName : Joi.string(),
-  enterpriseActivity : Joi.string(),
-  contractType: Joi.string().valid('CDI', 'CDD', 'Alternance', 'Autre'),
-  description: Joi.string(),
-  offerUrl: Joi.string().uri(),
-  location: Joi.string(),
-  salary: Joi.string(),
-  jobTitle: Joi.string(),
+  title: Joi.string().required(),
+  category: Joi.string().valid('Mes offres', 'Mes candidatures', 'Mes relances', 'Mes entretiens').required(),
+  enterpriseName : Joi.string().required(),
+  enterpriseActivity : Joi.string().allow(''),
+  contractType: Joi.string().valid('CDI', 'CDD', 'Alternance', 'Autre').required(),
+  description: Joi.string().allow(''),
+  offerUrl: Joi.string().uri().allow(''),
+  location: Joi.string().allow(''),
+  salary: Joi.string().allow(''),
+  jobTitle: Joi.string().allow(''),
   notation: Joi.number(),
   color: Joi.string(),
-  notes: Joi.string(),
-  reminder: Joi.date(),
-  logoUrl: Joi.string().uri(),
+  notes: Joi.string().allow(''),
+  reminder: Joi.date().allow(''),
+  logoUrl: Joi.string().uri().allow(''),
 });
 
 export const cardModificationSchema = Joi.object({
@@ -57,24 +56,24 @@ export const cardModificationSchema = Joi.object({
   title: Joi.string(),
   category: Joi.string().valid('Mes offres', 'Mes candidatures', 'Mes relances', 'Mes entretiens'),
   enterpriseName : Joi.string(),
-  enterpriseActivity : Joi.string(),
+  enterpriseActivity : Joi.string().allow(''),
   contractType: Joi.string().valid('CDI', 'CDD', 'Alternance', 'Autre'),
-  description: Joi.string(),
-  offerUrl: Joi.string().uri(),
-  location: Joi.string(),
-  salary: Joi.string(),
-  jobTitle: Joi.string(),
+  description: Joi.string().allow(''),
+  offerUrl: Joi.string().uri().allow(''),
+  location: Joi.string().allow(''),
+  salary: Joi.string().allow(''),
+  jobTitle: Joi.string().allow(''),
   notation: Joi.number(),
   color: Joi.string(),
-  notes: Joi.string(),
-  reminder: Joi.date(),
-  logoUrl: Joi.string().uri(),
+  notes: Joi.string().allow(''),
+  reminder: Joi.date().allow(''),
+  logoUrl: Joi.string().uri().allow(''),
 });
 
 export const cardMovingSchema = Joi.object({
   id: Joi.string().uuid().required(),
-  index: Joi.number().min(0),
-  category: Joi.string().valid('Mes offres', 'Mes candidatures', 'Mes relances', 'Mes entretiens'),
+  index: Joi.number().min(0).required(),
+  category: Joi.string().valid('Mes offres', 'Mes candidatures', 'Mes relances', 'Mes entretiens').required(),
 });
 
 
@@ -83,12 +82,12 @@ export const cardMovingSchema = Joi.object({
 export const contactCreationSchema = Joi.object({
   firstName: Joi.string().regex(/^[a-zA-ZÀ-ÿ' -]+$/).required(),
   lastName: Joi.string().regex(/^[a-zA-ZÀ-ÿ' -]+$/).required(),
-  occupation: Joi.string(),
-  email: Joi.string().email(),
-  phone: Joi.string().regex(/^(\+|\d{1,3})([\s.-]?\d+)+$/),
-  linkedinProfile: Joi.string().uri(),
-  enterprise: Joi.string(),
-  comments: Joi.string(),
+  occupation: Joi.string().allow(''),
+  email: Joi.string().email().allow(''),
+  phone: Joi.string().regex(/^(\+|\d{1,3})([\s.-]?\d+)+$/).allow(''),
+  linkedinProfile: Joi.string().uri().allow(''),
+  enterprise: Joi.string().allow(''),
+  comments: Joi.string().allow(''),
   color: Joi.string(),
 });
 
@@ -96,11 +95,11 @@ export const contactModificationSchema = Joi.object({
   id: Joi.string().uuid().required(),
   firstName: Joi.string().regex(/^[a-zA-ZÀ-ÿ' -]+$/),
   lastName: Joi.string().regex(/^[a-zA-ZÀ-ÿ' -]+$/),
-  occupation: Joi.string(),
-  email: Joi.string().email(),
-  phone: Joi.string().regex(/^(\+|\d{1,3})([\s.-]?\d+)+$/),
-  linkedinProfile: Joi.string().uri(),
-  enterprise: Joi.string(),
-  comments: Joi.string(),
+  occupation: Joi.string().allow(''),
+  email: Joi.string().email().allow(''),
+  phone: Joi.string().regex(/^(\+|\d{1,3})([\s.-]?\d+)+$/).allow(''),
+  linkedinProfile: Joi.string().uri().allow(''),
+  enterprise: Joi.string().allow(''),
+  comments: Joi.string().allow(''),
   color: Joi.string(),
 });

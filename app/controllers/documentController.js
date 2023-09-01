@@ -18,7 +18,7 @@ const documentController = {
     }
   },
 
-  async uploadFile(req,res) {
+  async uploadFile(req, res) {
     console.log(req.body.title);
     console.log(req.file);
   }

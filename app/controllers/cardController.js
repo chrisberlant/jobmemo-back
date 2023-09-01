@@ -40,8 +40,10 @@ const cardController = {
 
   async createNewCard(req, res) {
     try {
-      const newCardInfos = req.body;  // Contains all the form values provided by the user
+      const newCardInfos = req.body;
       const userId = req.user.user.id;
+
+      // TODO Transaction pour créer la carte au dernier index de la catégorie
 
       // New card is created according to the data provided by the user, and userId is set according to the request info
       const newCard = await Card.create({ ...newCardInfos, userId });
@@ -96,26 +98,28 @@ const cardController = {
 
       try {
         // We will change the indexes of the other cards moved on the dashboard
-        await Card.decrement({ index: 1 }, {   // Decrement index of the card
+        await Card.decrement({ index: 1 }, {   // Decrement index of the cards
           where: {
             userId,
-            category: oldCategory,   // If it belongs to the old category
-            index : { [Op.gt]: oldIndex }         // And its index > the card's old index in the old category
+            category: oldCategory,   // If they belong to the old category
+            index : { [Op.gt]: oldIndex }         // And their index > the moving card's old index in the old category
           },
           transaction: indexChangesTransaction
         });
 
-        await Card.increment({ index: 1 }, {   // Increment index of the card
+        await Card.increment({ index: 1 }, {   // Increment index of the cards
           where: {
             userId,
-            category,                // If it belongs to the new category
-            index : { [Op.gte]: index }         // And its index >= the card's index in the new category
+            category,                // If they belong to the new category
+            index : { [Op.gte]: index }         // And their index >= the moving card's index in the new category
           },
           transaction: indexChangesTransaction
         });
 
         // Change the index and category (if needed) of the moving card
-        await card.update({ index, category }, { transaction: indexChangesTransaction });
+        await card.update({ index, category }, {
+          transaction: indexChangesTransaction
+        });
 
         await indexChangesTransaction.commit();   // Execute the whole transaction
 
