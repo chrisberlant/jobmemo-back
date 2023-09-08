@@ -6,18 +6,18 @@ export const dataValidation = (schema) => (req, res, next) => {
     // We check here if user request is GET or any other type to either validate the req.params or the req.body
     const objectToValidate = req.method === 'GET' ? req.params : req.body;
 
-    const { error } = schema.validate(objectToValidate);
-
-    // Joi returns an object with attribute "error" if the data didn't pass the validation schema
-    if (error)          
-        return res.status(400).json(error.details[0].message);
-
     for (const key in objectToValidate) {       
         // Each value will be sanitized from malicious inserts
         objectToValidate[key] = xss(objectToValidate[key]);
         // Every empty value will be nulled
         if (objectToValidate[key].trim() === "") objectToValidate[key] = null;
     }
+
+    const { error } = schema.validate(objectToValidate);
+
+    // Joi returns an object with attribute "error" if the data didn't pass the validation schema
+    if (error)          
+        return res.status(400).json(error.details[0].message);
 
     next();
 };
