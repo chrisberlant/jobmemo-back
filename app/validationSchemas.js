@@ -55,7 +55,16 @@ export const userModificationSchema = Joi.object({
   avatarUrl: Joi.string().uri().allow('').messages({
     'string.uri': 'L\'avatar doit avoir une adresse valide'
   }),
-  address: Joi.string().allow('')
+  address: Joi.string().allow(null)
+});
+
+export const passwordModificationSchema = Joi.object({
+  password: Joi.string().min(6).messages({
+    'string.min': 'Le mot de passe doit contenir au moins {#limit} caractères',
+  }),
+  confirmPassword: Joi.string().valid(Joi.ref('password')).messages({
+    'any.only': 'Le mot de passe et sa confirmation sont différents'
+  })
 });
 
 
@@ -179,7 +188,9 @@ export const contactModificationSchema = Joi.object({
     'string.pattern.base': 'Le nom contient des caractères invalides',
   }),
   occupation: Joi.string().allow(''),
-  email: Joi.string().email().allow(''),
+  email: Joi.string().email().allow('').messages({
+    'string.email': 'L\'adresse email doit être valide.'
+  }),
   phone: Joi.string().regex(/^(\+|\d{1,3})([\s.-]?\d+)+$/).allow('').messages({
     'string.pattern.base': 'Le format du numéro de téléphone n\'est pas valide'
   }),

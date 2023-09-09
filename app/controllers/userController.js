@@ -41,6 +41,7 @@ const userController = {
 
       const saltRounds = parseInt(process.env.SALT_ROUNDS);
       const hashedPassword = await bcrypt.hash(password, saltRounds); // Hashing the password provided by the user
+      console.log(hashedPassword);
 
       const alreadyExistingUser = await User.findOne({ where: { email } }); // Check if user already exists
       if (alreadyExistingUser)
@@ -62,7 +63,6 @@ const userController = {
     try {
       const userId = req.user.user.id;
       const infosToModify = req.body;
-      const { password } = infosToModify;
 
       if (Object.keys(infosToModify).length === 0)  // If no data were provided by the user
         return res.status(400).json("Aucune information fournie");
@@ -71,17 +71,15 @@ const userController = {
       if (!user)
         return res.status(404).json("Impossible de trouver l'utilisateur dans la base");
 
-      // TODO hashedPassword
-      if (password) {
-        const saltRounds = parseInt(process.env.SALT_ROUNDS);
-        infosToModify.password = await bcrypt.hash(password, saltRounds);
-      }
-
       const userIsModified = await user.update({ ...infosToModify });
       if (!userIsModified)
         throw new Error("Impossible de modifier les infos utilisateur");
+      const newUserInfos = userIsModified.get({ plain: true });    // Create a copy of the sequelize object with only the infos needed
+      delete newUserInfos.password;
+      delete newUserInfos.id;
+      console.log(newUserInfos);
 
-      res.status(200).json(infosToModify);
+      res.status(200).json(userIsModified);
 
     } catch(error) {
       console.error(error);

@@ -32,7 +32,7 @@ router.patch('/trashOrRestoreCard', jwtMiddleware, dataValidation(selectionSchem
 router.delete('/deleteCard', jwtMiddleware, dataValidation(selectionSchema), cardController.deleteCard);
 
 /* ------------- CONTACTS ROUTES ------------- */
-router.get('/userContacts', jwtMiddleware, contactController.getUserContacts);
+router.get('/allContacts', jwtMiddleware, contactController.getUserContacts);
 router.get('/contact/:id', jwtMiddleware, dataValidation(selectionSchema), contactController.getContactById);
 router.post('/createNewContact', jwtMiddleware, dataValidation(contactCreationSchema), contactController.createNewContact);
 router.patch('/modifyContact', jwtMiddleware, dataValidation(contactModificationSchema), contactController.modifyContact);
