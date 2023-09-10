@@ -10,7 +10,7 @@ export const dataValidation = (schema) => (req, res, next) => {
         // Each value will be sanitized from malicious inserts
         objectToValidate[key] = xss(objectToValidate[key]);
         // Every empty value will be nulled
-        if (objectToValidate[key].trim() === "") objectToValidate[key] = null;
+        // if (objectToValidate[key].trim() === "") objectToValidate[key] = '';
     }
 
     const { error } = schema.validate(objectToValidate);

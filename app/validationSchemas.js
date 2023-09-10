@@ -55,7 +55,7 @@ export const userModificationSchema = Joi.object({
   avatarUrl: Joi.string().uri().allow('').messages({
     'string.uri': 'L\'avatar doit avoir une adresse valide'
   }),
-  address: Joi.string().allow(null)
+  address: Joi.string().allow('')
 });
 
 export const passwordModificationSchema = Joi.object({
