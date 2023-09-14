@@ -136,6 +136,130 @@ const cardController = {
     }
   },
 
+  async sendCardToTrash(req, res) {
+    try {
+
+      const { id } = req.body;
+      const userId = req.user.user.id;
+
+      const cardToTrash = await Card.findOne({ where : { id, userId, isDeleted: false } });
+      if (!cardToTrash)
+        return res.status(404).json("Impossible de trouver la fiche dans le dashboard");
+
+      const index = cardToTrash.index;
+      const category = cardToTrash.category;
+      
+      const sendToTrashTransaction = await sequelize.transaction();
+      
+      try {
+
+        // We will decrement the indexes of the cards belonging to the category of the trashed card
+        await Card.decrement({ index: 1 }, {   // Decrement index of the cards
+          where: {
+            userId,
+            isDeleted: false, // If they are not in the trash aswell
+            category,   // If they belong to the same category
+            index : { [Op.gt]: index }         // And their index > the card to send to trash
+          },
+          transaction: sendToTrashTransaction
+        });
+
+        // Get the highest index of the user's trashed cards
+        const highestIndexInTrash = await Card.max('index', {
+          where: { userId,
+            isDeleted: true 
+          },
+          transaction: sendToTrashTransaction
+        });
+
+        // New card index will be 0 if no card is currently in the trash
+        let newIndex = 0;
+        console.log(highestIndexInTrash)
+        if (highestIndexInTrash != null) {
+          newIndex = highestIndexInTrash + 1;
+        }
+
+        await cardToTrash.update({ isDeleted: true, index: newIndex }, {
+          transaction: sendToTrashTransaction
+        });
+        
+        await sendToTrashTransaction.commit();   // Execute the whole transaction
+
+        res.status(200).json(cardToTrash);
+
+      } catch(error) {
+        await sendToTrashTransaction.rollback();   // Cancel the whole transaction
+        throw new Error('Impossible d\'envoyer la fiche à la corbeille');
+      }
+    
+    } catch(error) {
+      console.error(error);
+      res.status(500).json(error);
+    }
+  },
+
+  async restoreCard(req, res) {
+    try {
+
+      const { id } = req.body;
+      const userId = req.user.user.id;
+
+      const cardToRestore = await Card.findOne({ where : { id, userId, isDeleted: true } });
+      if (!cardToRestore)
+        return res.status(404).json("Impossible de trouver la fiche dans la corbeille");
+
+      const index = cardToRestore.index;
+      const category = cardToRestore.category;
+      
+      const restoreCardTransaction = await sequelize.transaction();
+      
+      try {
+
+        // We will decrement the indexes of the other trashed cards
+        await Card.decrement({ index: 1 }, {   // Decrement index of the cards
+          where: {
+            userId,
+            isDeleted: true, // If they are in the trash
+            index : { [Op.gt]: index }         // And their index > the card to restore
+          },
+          transaction: restoreCardTransaction
+        });
+
+        // Get the highest index of the user's card in the same category in the dashboard
+        const highestIndexInDashboard = await Card.max('index', {
+          where: { 
+            userId, 
+            isDeleted: false, 
+            category 
+          },
+          transaction: restoreCardTransaction
+        });
+
+        // New card index will be 0 if no card is currently in the dashboard in this category
+        let newIndex = 0;
+        if (highestIndexInDashboard != null) { // Restore the card after the highest index
+          newIndex = highestIndexInDashboard + 1; 
+        }
+
+        await cardToRestore.update({ isDeleted: false, index: newIndex }, {
+          transaction: restoreCardTransaction
+        });
+        
+        await restoreCardTransaction.commit();   // Execute the whole transaction
+
+        res.status(200).json(cardToRestore);
+
+      } catch(error) {
+        await restoreCardTransaction.rollback();   // Cancel the whole transaction
+        throw new Error('Impossible de restaurer la fiche depuis la corbeille');
+      }
+    
+    } catch(error) {
+      console.error(error);
+      res.status(500).json(error);
+    }
+  },
+
   async trashOrRestoreCard(req, res) {
     try {
       const { id } = req.body;

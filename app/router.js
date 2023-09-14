@@ -28,7 +28,8 @@ router.get('/card/:id', jwtMiddleware, dataValidation(selectionSchema), cardCont
 router.post('/createNewCard', jwtMiddleware, dataValidation(cardCreationSchema), cardController.createNewCard);
 router.patch('/modifyCard', jwtMiddleware, dataValidation(cardModificationSchema), cardController.modifyCard);
 router.patch('/moveCard', jwtMiddleware, dataValidation(cardMovingSchema), cardController.moveCard);
-router.patch('/trashOrRestoreCard', jwtMiddleware, dataValidation(selectionSchema), cardController.trashOrRestoreCard);
+router.patch('/sendCardToTrash', jwtMiddleware, dataValidation(selectionSchema), cardController.sendCardToTrash);
+router.patch('/restoreCard', jwtMiddleware, dataValidation(selectionSchema), cardController.restoreCard);
 router.delete('/deleteCard', jwtMiddleware, dataValidation(selectionSchema), cardController.deleteCard);
 
 /* ------------- CONTACTS ROUTES ------------- */

@@ -20,4 +20,18 @@ INSERT INTO "card" ("id", "title", "category", "index", "enterprise_name", "ente
 INSERT INTO "card" ("id", "title", "category", "index", "enterprise_name", "enterprise_activity", "contract_type", "description", "offer_url", "location", "salary", "job_title", "notation", "color", "is_deleted", "notes", "reminder", "logo_url", "created_at", "user_id") VALUES
 ('b0ea2637-cc0b-4774-a5a0-7471ecedf2df', 'Carte Disneyland', 'Mes offres', 0, 'Disney', 'Divertissement', 'CDI', 'Directeur de parc chez Disneyland', 'http://linkedin.com/lien_offre', 'Marne la Vallée', '100000000€ annuels', 'Directeur Disneyland', 5, 'rouge', 'f', 'Mes amis travaillent là-bas', '2023-08-05 00:00:00+00', 'http://www.disney.fr/logo.jpg', '2023-07-25 13:50:51.71+00', '7dbcfb4a-639c-401d-b2a8-0f6d5511fece');
 
+-- Inserting dummy contacts data
+
+INSERT INTO "public"."contact" ("id", "first_name", "last_name", "occupation", "email", "phone", "linkedin_profile", "enterprise", "comments", "color", "user_id") VALUES
+('9406bb94-c375-47df-b070-a7ce1e287b92', 'Eric', 'Cartman', 'lol man', 'eric.cartman@gmail.com', '0606060606', 'https://oclock.io/', 'des lols', '', '#fff', '235c1fb1-5dbe-4cb6-b18e-78b3554c80af');
+INSERT INTO "public"."contact" ("id", "first_name", "last_name", "occupation", "email", "phone", "linkedin_profile", "enterprise", "comments", "color", "user_id") VALUES
+('acbefb55-f767-493c-b0bb-1fa46c91d250', 'Bill', 'Gates', 'PDG', 'bill.gates@microsoft.com', '01024464', 'http://linkedin.com/bill-gates', 'Microsoft', 'PDG d''un GAFAM', '#fff', '235c1fb1-5dbe-4cb6-b18e-78b3554c80af');
+INSERT INTO "public"."contact" ("id", "first_name", "last_name", "occupation", "email", "phone", "linkedin_profile", "enterprise", "comments", "color", "user_id") VALUES
+('ae0fa3eb-7376-468d-a37c-c97b80836207', 'Jean Claude', 'DUSS', 'Happines manager', 'jeanclaude.duss@gmail.com', '0606060606', 'https://oclock.io/', 'ONALESDROITS', NULL, '#fff', '235c1fb1-5dbe-4cb6-b18e-78b3554c80af');
+INSERT INTO "public"."contact" ("id", "first_name", "last_name", "occupation", "email", "phone", "linkedin_profile", "enterprise", "comments", "color", "user_id") VALUES
+('e98876a1-996c-4acc-ae43-f64038978dae', 'landry', 'david', 'dev react', 'landry.david@gmail.com', '0123456789', 'http://linkedin.com', 'Google', NULL, '#fff', '235c1fb1-5dbe-4cb6-b18e-78b3554c80af'),
+('241f293b-83e7-49ef-af7f-0b3ea039d87c', 'chris', 'berlant', 'chômeur', 'chris.berlant@gmail.com', '06278841', 'http://linkedin.com/chris-berlant', 'pôle emploi', 'test d''utilisation des contacts', 'blue', '235c1fb1-5dbe-4cb6-b18e-78b3554c80af'),
+('ac3dc272-84e0-42f0-a424-6b211716097a', 'johann', 'moss', 'graphiste', 'johann.moss@gmail.com', '987654321', 'http://linkedin.com', 'Adobe', 'fan de DND', '#fff', '235c1fb1-5dbe-4cb6-b18e-78b3554c80af');
+
+
 COMMIT;

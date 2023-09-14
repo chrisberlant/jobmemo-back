@@ -11,7 +11,7 @@ CREATE TABLE "user" (
     last_name text NOT NULL,
     password text NOT NULL,
     avatar_url text NOT NULL DEFAULT '/img/default_avatar.png',
-    address text
+    address text DEFAULT ''
 );
 
 CREATE TABLE card (
@@ -21,19 +21,19 @@ CREATE TABLE card (
     category text NOT NULL DEFAULT 'Mes offres',
     index int2 NOT NULL DEFAULT 0,
     enterprise_name text NOT NULL DEFAULT 'Nom de l''entreprise',
-    enterprise_activity text,
+    enterprise_activity text DEFAULT '',
     contract_type text NOT NULL DEFAULT 'Autre',
-    description text,
-    offer_url text,
-    location text,
-    salary text,
-    job_title text,
+    description text DEFAULT '',
+    offer_url text DEFAULT '',
+    location text DEFAULT '',
+    salary text DEFAULT '',
+    job_title text DEFAULT '',
     notation int2 NOT NULL DEFAULT 1,
     color text NOT NULL DEFAULT '#fff',
     is_deleted bool NOT NULL DEFAULT false,
-    notes text,
+    notes text DEFAULT '',
     reminder timestamptz,
-    logo_url text,
+    logo_url text DEFAULT '',
     created_at timestamptz NOT NULL,
     FOREIGN KEY (user_id) REFERENCES "user"(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -43,12 +43,12 @@ CREATE TABLE contact (
     user_id uuid NOT NULL,
     first_name text NOT NULL,
     last_name text NOT NULL,
-    occupation text,
-    email text,
-    phone text,
-    linkedin_profile text,
-    enterprise text,
-    comments text,
+    occupation text DEFAULT '',
+    email text DEFAULT '',
+    phone text DEFAULT '',
+    linkedin_profile text DEFAULT '',
+    enterprise text DEFAULT '',
+    comments text DEFAULT '',
     color text NOT NULL DEFAULT '#fff',
     FOREIGN KEY (user_id) REFERENCES "user"(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
