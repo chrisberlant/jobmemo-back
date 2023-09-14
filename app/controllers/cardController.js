@@ -84,7 +84,7 @@ const cardController = {
       const { id, index, category } = req.body;
       const userId = req.user.user.id;
 
-      const card = await Card.findOne({ where : { id, userId } });
+      const card = await Card.findOne({ where : { id, userId, isDeleted: false } });
       if (!card)
         return res.status(404).json("Impossible de trouver la fiche dans la base");
 
@@ -102,6 +102,7 @@ const cardController = {
           where: {
             userId,
             category: oldCategory,   // If they belong to the old category
+            isDeleted: false, // If they are on the dashboard
             index : { [Op.gt]: oldIndex }         // And their index > the moving card's old index in the old category
           },
           transaction: indexChangesTransaction
@@ -111,6 +112,7 @@ const cardController = {
           where: {
             userId,
             category,                // If they belong to the new category
+            isDeleted: false,
             index : { [Op.gte]: index }         // And their index >= the moving card's index in the new category
           },
           transaction: indexChangesTransaction
