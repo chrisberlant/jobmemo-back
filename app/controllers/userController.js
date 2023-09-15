@@ -28,7 +28,7 @@ const userController = {
       res.cookie('jobmemo_token', token, {
         httpOnly: true
       });
-      res.status(200).json("Connexion effectuée");
+      res.status(200).json(userSearched.firstName);
 
     } catch (error) {
       console.error(error);
