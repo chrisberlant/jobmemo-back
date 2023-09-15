@@ -5,14 +5,14 @@ const jwtMiddleware = (req, res, next) => {
     const token = req.cookies.jobmemo_token;
 
     if (!token)
-      return res.status(401).json("Vous n'êtes pas connecté");
+      return res.status(401).json("Aucun token trouvé");
 
     try {
       const verifiedToken = jwt.verify(token, process.env.SECRET_KEY);
       req.user = verifiedToken;
       next();
     } catch(error) {
-        return res.status(401).json("Token non valide");
+        return res.status(403).json("Token invalide");
     }
 
 }

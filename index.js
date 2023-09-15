@@ -11,7 +11,12 @@ const app = express();
 app.use(cookieParser());
 app.use(express.static('public'));
 
-app.use(cors());
+const corsOptions = {
+    origin: 'http://localhost:5173',
+    credentials: true, // Autorise les credentials (cookies, headers d'autorisation)
+  };
+
+app.use(cors(corsOptions));
 app.use(express.json());
 const mutipartParser = multer();
 app.use(mutipartParser.none());

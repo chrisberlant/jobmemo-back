@@ -13,7 +13,7 @@ const userController = {
         { email: email.toLowerCase() }
       });
       if (!userSearched) // If user cannot be found
-        return res.status(401).json(`User ${email} does not exist`);
+        return res.status(401).json("Email ou mot de passe incorrect");
 
       // Hashing the password provided by the user to compare it with the one in the DB
       const passwordsMatch = await bcrypt.compare(password, userSearched.password);
@@ -22,12 +22,13 @@ const userController = {
 
       const id = userSearched.id;
 
-      //TODO : VERIFIER LES INFOS ESSENTIELLES (id user, email ?);
       // We set a variable containing the token that will be sent to the front-end
       const token = jwt.sign({ id }, process.env.SECRET_KEY);
+      console.log("Création du JWT en cookie");
       res.cookie('jobmemo_token', token, {
         httpOnly: true
-      }).status(200).json("Connexion effectuée");
+      });
+      res.status(200).json("Connexion effectuée");
 
     } catch (error) {
       console.error(error);
@@ -52,7 +53,7 @@ const userController = {
       if (!user)
         throw new Error("Impossible de créer l'utilisateur");
 
-      res.status(201).json('User has been created');
+      res.status(201).json("Le compte a été créé");
 
     } catch(error) {
       console.error(error);
@@ -61,7 +62,8 @@ const userController = {
   },
 
   async logout(req, res) {
-    res.clearCookie("jobmemo_token").status(200).json("Déconnexion effectuée");
+    res.clearCookie("jobmemo_token");
+    res.status(200).json("Déconnexion effectuée");
   },
 
   async modifyUserInfos(req, res) {
