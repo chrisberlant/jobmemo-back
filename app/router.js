@@ -19,6 +19,7 @@ router.get('/', (req, res) => res.send("Hello world"));
 /* ------------- USER/AUTH ROUTES ------------- */
 router.post('/login', dataValidation(userLoginSchema), userController.login);
 router.post('/register', dataValidation(userRegistrationSchema), userController.register);
+router.get('/getUserInfos', jwtMiddleware, userController.getUserInfos);
 router.patch('/modifyUserInfos', jwtMiddleware, dataValidation(userModificationSchema), userController.modifyUserInfos);
 router.get('/logout', userController.logout);
 router.delete('/deleteUser', jwtMiddleware, userController.deleteUser);

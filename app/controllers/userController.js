@@ -22,13 +22,18 @@ const userController = {
 
       const id = userSearched.id;
 
+      const user = userSearched.get({ plain: true });    // Create a copy of the sequelize object with only the infos needed
+      delete user.password;       // removing the password before using the object
+      delete user.id;
+
       // We set a variable containing the token that will be sent to the front-end
       const token = jwt.sign({ id }, process.env.SECRET_KEY);
-      console.log("Création du JWT en cookie");
+
+      // Send the JWT as cookie
       res.cookie('jobmemo_token', token, {
         httpOnly: true
       });
-      res.status(200).json(userSearched.firstName);
+      res.status(200).json(user);
 
     } catch (error) {
       console.error(error);
@@ -64,6 +69,23 @@ const userController = {
   async logout(req, res) {
     res.clearCookie("jobmemo_token");
     res.status(200).json("Déconnexion effectuée");
+  },
+
+  async getUserInfos(req, res) {
+    try {
+      const userId = req.user.id;
+      console.log(userId);
+
+      const user = await User.findByPk(userId)
+      if (!user)
+        return res.status(404).json ("Utilisateur introuvable");
+
+      res.status(200).json(user);
+
+    } catch(error) {
+      console.error(error);
+      res.status(500).json(error);
+    }
   },
 
   async modifyUserInfos(req, res) {
