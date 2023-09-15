@@ -6,7 +6,7 @@ const cardController = {
 
   async getAllCards(req, res) {
     try {
-      const userId = req.user.user.id;
+      const userId = req.user.id;
 
       const cards = await Card.findAll({ where: { userId } });
       if (!cards)
@@ -22,7 +22,7 @@ const cardController = {
 
   async getCardById(req, res) {
     try {
-      const userId = req.user.user.id;
+      const userId = req.user.id;
       const id = req.params.id;
 
       const card = await Card.findOne({ where : { id, userId },
@@ -40,8 +40,8 @@ const cardController = {
 
   async createNewCard(req, res) {
     try {
+      const userId = req.user.id;
       const newCardInfos = req.body;
-      const userId = req.user.user.id;
 
       // TODO Transaction pour créer la carte au dernier index de la catégorie
 
@@ -60,8 +60,8 @@ const cardController = {
 
   async modifyCard(req, res) {
     try {
+      const userId = req.user.id;
       const { id, ...newInfos } = req.body;
-      const userId = req.user.user.id;
 
       const card = await Card.findOne({ where : { id, userId } });
       if (!card)
@@ -81,8 +81,8 @@ const cardController = {
 
   async moveCard(req, res) {
     try {
+      const userId = req.user.id;
       const { id, index, category } = req.body;
-      const userId = req.user.user.id;
 
       const card = await Card.findOne({ where : { id, userId, isDeleted: false } });
       if (!card)
@@ -140,9 +140,8 @@ const cardController = {
 
   async sendCardToTrash(req, res) {
     try {
-
+      const userId = req.user.id;
       const { id } = req.body;
-      const userId = req.user.user.id;
 
       const cardToTrash = await Card.findOne({ where : { id, userId, isDeleted: false } });
       if (!cardToTrash)
@@ -154,7 +153,6 @@ const cardController = {
       const sendToTrashTransaction = await sequelize.transaction();
       
       try {
-
         // We will decrement the indexes of the cards belonging to the category of the trashed card
         await Card.decrement({ index: 1 }, {   // Decrement index of the cards
           where: {
@@ -202,9 +200,8 @@ const cardController = {
 
   async restoreCard(req, res) {
     try {
-
+      const userId = req.user.id;
       const { id } = req.body;
-      const userId = req.user.user.id;
 
       const cardToRestore = await Card.findOne({ where : { id, userId, isDeleted: true } });
       if (!cardToRestore)
@@ -216,7 +213,6 @@ const cardController = {
       const restoreCardTransaction = await sequelize.transaction();
       
       try {
-
         // We will decrement the indexes of the other trashed cards
         await Card.decrement({ index: 1 }, {   // Decrement index of the cards
           where: {
@@ -264,8 +260,8 @@ const cardController = {
 
   async trashOrRestoreCard(req, res) {
     try {
+      const userId = req.user.id;
       const { id } = req.body;
-      const userId = req.user.user.id;
 
       const card = await Card.findOne({ where : { id, userId } });
       if (!card)
@@ -294,8 +290,8 @@ const cardController = {
 
   async deleteCard(req, res) {
     try {
+      const userId = req.user.id;
       const { id } = req.body;
-      const userId = req.user.user.id;
 
       const card = await Card.findOne({ where : { id, userId } });
       if (!card)

@@ -4,7 +4,7 @@ const documentController = {
 
   async getUserDocuments(req, res) {
     try {
-      const userId = req.user.user.id;
+      const userId = req.user.id;
 
       const documents = await Document.findAll({ where: { userId } });
       if (!documents)

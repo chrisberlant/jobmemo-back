@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 
 const jwtMiddleware = (req, res, next) => {
     // Split to get the token value without the prefix 'Bearer'
-    const token = req.headers.authorization?.split(' ')[1];
+    const token = req.cookies.jobmemo_token;
 
     if (!token)
       return res.status(401).json("Vous n'êtes pas connecté");

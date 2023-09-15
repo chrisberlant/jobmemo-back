@@ -4,7 +4,7 @@ const contactController = {
 
   async getUserContacts(req, res) {
     try {
-      const userId = req.user.user.id;
+      const userId = req.user.id;
 
       const contacts = await Contact.findAll({ where: { userId } });
       if (!contacts)
@@ -21,7 +21,7 @@ const contactController = {
   async createNewContact(req, res) {
     try {
       const newContactInfos = req.body;
-      const userId = req.user.user.id;
+      const userId = req.user.id;
 
       const newContact = await Contact.create({ ...newContactInfos, userId });
 
@@ -39,7 +39,7 @@ const contactController = {
   async modifyContact(req, res) {
     try {
       const { id, ...newInfos } = req.body;
-      const userId = req.user.user.id;
+      const userId = req.user;
 
       const contact = await Contact.findOne({ where : { id, userId } });
 
@@ -61,7 +61,7 @@ const contactController = {
   async deleteContact(req, res) {
     try {
       const { id } = req.body;
-      const userId = req.user.user.id;
+      const userId = req.user;
 
       const contact = await Contact.findOne({ where: { id, userId } });
       if (!contact)
@@ -81,7 +81,7 @@ const contactController = {
 
   async getContactById(req, res) {
     try {
-      const userId = req.user.user.id;
+      const userId = req.user;
       const id = req.params.id;
 
       const contact = await Contact.findOne({ where : { id, userId } });

@@ -20,13 +20,14 @@ const userController = {
       if (!passwordsMatch)
         return res.status(401).json("Email ou mot de passe incorrect");
 
-      const user = userSearched.get({ plain: true });    // Create a copy of the sequelize object with only the infos needed
-      delete user.password;       // removing the password before using the object
+      const id = userSearched.id;
 
       //TODO : VERIFIER LES INFOS ESSENTIELLES (id user, email ?);
       // We set a variable containing the token that will be sent to the front-end
-      const token = jwt.sign({ user }, process.env.SECRET_KEY);
-      res.status(200).json({ user, token });
+      const token = jwt.sign({ id }, process.env.SECRET_KEY);
+      res.cookie('jobmemo_token', token, {
+        httpOnly: true
+      }).status(200).json("Connexion effectuée");
 
     } catch (error) {
       console.error(error);
@@ -59,9 +60,13 @@ const userController = {
     }
   },
 
+  async logout(req, res) {
+    res.clearCookie("jobmemo_token").status(200).json("Déconnexion effectuée");
+  },
+
   async modifyUserInfos(req, res) {
     try {
-      const userId = req.user.user.id;
+      const userId = req.user.id;
       const infosToModify = req.body;
 
       if (Object.keys(infosToModify).length === 0)  // If no data were provided by the user
@@ -89,7 +94,7 @@ const userController = {
 
   async deleteUser(req, res) {
     try {
-      const userId = req.user.user.id;
+      const userId = req.user.id;
 
       const user = await User.findByPk(userId);
       if (!user)
