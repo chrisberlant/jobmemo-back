@@ -8,11 +8,17 @@ const cardController = {
     try {
       const userId = req.user.id;
 
-      const cards = await Card.findAll({ where: { userId } });
-      if (!cards)
+      const allCards = await Card.findAll({ where: { userId } });
+      if (!allCards)
         return res.status(404).json("Can't find cards");
 
-      res.status(200).json(cards);
+      const dashboardCards = allCards.filter((card) => card.isDeleted === false);
+      const trashedCards = allCards.filter((card) => card.isDeleted === true);
+
+      console.log(dashboardCards);
+      console.log(trashedCards);
+
+      res.status(200).json({ dashboardCards, trashedCards });
 
     } catch(error) {
       console.error(error);
@@ -123,9 +129,11 @@ const cardController = {
           transaction: indexChangesTransaction
         });
 
+        
         await indexChangesTransaction.commit();   // Execute the whole transaction
+        const updatedCards = await Card.findAll({ where: { userId } });
 
-        res.status(200).json(card);
+        res.status(200).json({card, updatedCards});
 
       } catch(error) {
         await indexChangesTransaction.rollback();   // Cancel the whole transaction

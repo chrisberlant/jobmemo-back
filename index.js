@@ -13,7 +13,7 @@ app.use(express.static('public'));
 
 const corsOptions = {
     origin: 'http://localhost:5173',
-    credentials: true, // Autorise les credentials (cookies, headers d'autorisation)
+    credentials: true, // Authorize credentials (cookies, headers)
   };
 
 app.use(cors(corsOptions));
