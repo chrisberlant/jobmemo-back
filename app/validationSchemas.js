@@ -141,11 +141,11 @@ export const cardMovingSchema = Joi.object({
   id: Joi.string().uuid().required().messages({
     'any.required': 'L\'id doit être renseigné'
   }),
-  index: Joi.number().integer().min(0).required().messages({
+  newIndex: Joi.number().integer().min(0).required().messages({
     'any.required': 'L\'index doit être renseigné',
     'number.min': 'L\'index doit être supérieur ou égal à 0'
   }),
-  category: Joi.string().valid('Mes offres', 'Mes candidatures', 'Mes relances', 'Mes entretiens').required().messages({
+  newCategory: Joi.string().valid('Mes offres', 'Mes candidatures', 'Mes relances', 'Mes entretiens').required().messages({
     'any.only': 'La catégorie doit être au choix : Mes offres, Mes candidatures, Mes relances ou Mes entretiens'
   }),
 });

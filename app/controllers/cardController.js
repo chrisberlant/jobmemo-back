@@ -15,9 +15,6 @@ const cardController = {
       const dashboardCards = allCards.filter((card) => card.isDeleted === false);
       const trashedCards = allCards.filter((card) => card.isDeleted === true);
 
-      console.log(dashboardCards);
-      console.log(trashedCards);
-
       res.status(200).json({ dashboardCards, trashedCards });
 
     } catch(error) {
@@ -88,7 +85,8 @@ const cardController = {
   async moveCard(req, res) {
     try {
       const userId = req.user.id;
-      const { id, index, category } = req.body;
+      const { id, newIndex, newCategory } = req.body;
+      const newCardIndex = Number(newIndex);
 
       const card = await Card.findOne({ where : { id, userId, isDeleted: false } });
       if (!card)
@@ -98,43 +96,49 @@ const cardController = {
       const oldCategory = card.category;
       const oldIndex = card.index;
 
+      console.log(oldCategory);
+      console.log(newCategory);
+
       // Create a new sequelize transaction to optimize the amount of queries done to the DB
       // It allows us to cancel everything if one the operations failed, preventing index duplicates in the DB
       const indexChangesTransaction = await sequelize.transaction();
 
       try {
-        // We will change the indexes of the other cards moved on the dashboard
-        await Card.decrement({ index: 1 }, {   // Decrement index of the cards
-          where: {
-            userId,
-            category: oldCategory,   // If they belong to the old category
-            isDeleted: false, // If they are on the dashboard
-            index : { [Op.gt]: oldIndex }         // And their index > the moving card's old index in the old category
-          },
-          transaction: indexChangesTransaction
-        });
 
+        // If the card changed category
+        if (oldCategory !== newCategory) {
+        // We will change the indexes of the old category's cards
+          await Card.decrement({ index: 1 }, {   // Decrement index of the cards
+            where: {
+              userId,
+              category: oldCategory,   // If they belong to the old category
+              isDeleted: false, // If they are on the dashboard
+              index : { [Op.gt]: oldIndex }         // And their index > the moving card's old index in the old category
+            },
+            transaction: indexChangesTransaction
+          });
+        }
+
+        // Either way we will change the indexes of the new (or same) category's cards
         await Card.increment({ index: 1 }, {   // Increment index of the cards
           where: {
             userId,
-            category,                // If they belong to the new category
+            category: newCategory,                // If they belong to the new category
             isDeleted: false,
-            index : { [Op.gte]: index }         // And their index >= the moving card's index in the new category
+            index : { [Op.gte]: newCardIndex }         // And their index >= the moving card's index in the new category
           },
           transaction: indexChangesTransaction
         });
 
+
         // Change the index and category (if needed) of the moving card
-        await card.update({ index, category }, {
+        await card.update({ index: newCardIndex, category: newCategory }, {
           transaction: indexChangesTransaction
         });
 
-        
         await indexChangesTransaction.commit();   // Execute the whole transaction
-        const updatedCards = await Card.findAll({ where: { userId } });
-
-        res.status(200).json({card, updatedCards});
-
+        res.status(200).json({ card, oldCategory, oldIndex });
+        
       } catch(error) {
         await indexChangesTransaction.rollback();   // Cancel the whole transaction
         throw new Error('Impossible de déplacer la fiche');
