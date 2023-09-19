@@ -13,20 +13,27 @@ const userController = {
         { email: email.toLowerCase() }
       });
       if (!userSearched) // If user cannot be found
-        return res.status(401).json(`User ${email} does not exist`);
+        return res.status(401).json("Email ou mot de passe incorrect");
 
       // Hashing the password provided by the user to compare it with the one in the DB
       const passwordsMatch = await bcrypt.compare(password, userSearched.password);
       if (!passwordsMatch)
         return res.status(401).json("Email ou mot de passe incorrect");
 
+      const id = userSearched.id;
+
       const user = userSearched.get({ plain: true });    // Create a copy of the sequelize object with only the infos needed
       delete user.password;       // removing the password before using the object
+      delete user.id;
 
-      //TODO : VERIFIER LES INFOS ESSENTIELLES (id user, email ?);
       // We set a variable containing the token that will be sent to the front-end
-      const token = jwt.sign({ user }, process.env.SECRET_KEY);
-      res.status(200).json({ user, token });
+      const token = jwt.sign({ id }, process.env.SECRET_KEY);
+
+      // Send the JWT as cookie
+      res.cookie('jobmemo_token', token, {
+        httpOnly: true
+      });
+      res.status(200).json(user);
 
     } catch (error) {
       console.error(error);
@@ -41,6 +48,7 @@ const userController = {
 
       const saltRounds = parseInt(process.env.SALT_ROUNDS);
       const hashedPassword = await bcrypt.hash(password, saltRounds); // Hashing the password provided by the user
+      console.log(hashedPassword);
 
       const alreadyExistingUser = await User.findOne({ where: { email } }); // Check if user already exists
       if (alreadyExistingUser)
@@ -50,7 +58,29 @@ const userController = {
       if (!user)
         throw new Error("Impossible de créer l'utilisateur");
 
-      res.status(201).json('User has been created');
+      res.status(201).json("Le compte a été créé");
+
+    } catch(error) {
+      console.error(error);
+      res.status(500).json(error);
+    }
+  },
+
+  async logout(req, res) {
+    res.clearCookie("jobmemo_token");
+    res.status(200).json("Déconnexion effectuée");
+  },
+
+  async getUserInfos(req, res) {
+    try {
+      const userId = req.user.id;
+      console.log(userId);
+
+      const user = await User.findByPk(userId)
+      if (!user)
+        return res.status(404).json ("Utilisateur introuvable");
+
+      res.status(200).json(user);
 
     } catch(error) {
       console.error(error);
@@ -60,9 +90,8 @@ const userController = {
 
   async modifyUserInfos(req, res) {
     try {
-      const userId = req.user.user.id;
+      const userId = req.user.id;
       const infosToModify = req.body;
-      const { password } = infosToModify;
 
       if (Object.keys(infosToModify).length === 0)  // If no data were provided by the user
         return res.status(400).json("Aucune information fournie");
@@ -71,17 +100,15 @@ const userController = {
       if (!user)
         return res.status(404).json("Impossible de trouver l'utilisateur dans la base");
 
-      // TODO hashedPassword
-      if (password) {
-        const saltRounds = parseInt(process.env.SALT_ROUNDS);
-        infosToModify.password = await bcrypt.hash(password, saltRounds);
-      }
-
       const userIsModified = await user.update({ ...infosToModify });
       if (!userIsModified)
         throw new Error("Impossible de modifier les infos utilisateur");
+      const newUserInfos = userIsModified.get({ plain: true });    // Create a copy of the sequelize object with only the infos needed
+      delete newUserInfos.password;
+      delete newUserInfos.id;
+      console.log(newUserInfos);
 
-      res.status(200).json(infosToModify);
+      res.status(200).json(userIsModified);
 
     } catch(error) {
       console.error(error);
@@ -91,7 +118,7 @@ const userController = {
 
   async deleteUser(req, res) {
     try {
-      const userId = req.user.user.id;
+      const userId = req.user.id;
 
       const user = await User.findByPk(userId);
       if (!user)

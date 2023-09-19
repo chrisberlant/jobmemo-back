@@ -19,7 +19,9 @@ router.get('/', (req, res) => res.send("Hello world"));
 /* ------------- USER/AUTH ROUTES ------------- */
 router.post('/login', dataValidation(userLoginSchema), userController.login);
 router.post('/register', dataValidation(userRegistrationSchema), userController.register);
+router.get('/getUserInfos', jwtMiddleware, userController.getUserInfos);
 router.patch('/modifyUserInfos', jwtMiddleware, dataValidation(userModificationSchema), userController.modifyUserInfos);
+router.get('/logout', userController.logout);
 router.delete('/deleteUser', jwtMiddleware, userController.deleteUser);
 
 /* ------------- CARDS ROUTES ------------- */
@@ -28,11 +30,12 @@ router.get('/card/:id', jwtMiddleware, dataValidation(selectionSchema), cardCont
 router.post('/createNewCard', jwtMiddleware, dataValidation(cardCreationSchema), cardController.createNewCard);
 router.patch('/modifyCard', jwtMiddleware, dataValidation(cardModificationSchema), cardController.modifyCard);
 router.patch('/moveCard', jwtMiddleware, dataValidation(cardMovingSchema), cardController.moveCard);
-router.patch('/trashOrRestoreCard', jwtMiddleware, dataValidation(selectionSchema), cardController.trashOrRestoreCard);
+router.patch('/sendCardToTrash', jwtMiddleware, dataValidation(selectionSchema), cardController.sendCardToTrash);
+router.patch('/restoreCard', jwtMiddleware, dataValidation(selectionSchema), cardController.restoreCard);
 router.delete('/deleteCard', jwtMiddleware, dataValidation(selectionSchema), cardController.deleteCard);
 
 /* ------------- CONTACTS ROUTES ------------- */
-router.get('/userContacts', jwtMiddleware, contactController.getUserContacts);
+router.get('/allContacts', jwtMiddleware, contactController.getUserContacts);
 router.get('/contact/:id', jwtMiddleware, dataValidation(selectionSchema), contactController.getContactById);
 router.post('/createNewContact', jwtMiddleware, dataValidation(contactCreationSchema), contactController.createNewContact);
 router.patch('/modifyContact', jwtMiddleware, dataValidation(contactModificationSchema), contactController.modifyContact);

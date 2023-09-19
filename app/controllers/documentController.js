@@ -4,7 +4,7 @@ const documentController = {
 
   async getUserDocuments(req, res) {
     try {
-      const userId = req.user.user.id;
+      const userId = req.user.id;
 
       const documents = await Document.findAll({ where: { userId } });
       if (!documents)
@@ -18,7 +18,7 @@ const documentController = {
     }
   },
 
-  async uploadFile(req,res) {
+  async uploadFile(req, res) {
     console.log(req.body.title);
     console.log(req.file);
   }
