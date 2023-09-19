@@ -8,14 +8,11 @@ const cardController = {
     try {
       const userId = req.user.id;
 
-      const allCards = await Card.findAll({ where: { userId } });
-      if (!allCards)
+      const cards = await Card.findAll({ where: { userId } });
+      if (!cards)
         return res.status(404).json("Can't find cards");
 
-      const dashboardCards = allCards.filter((card) => card.isDeleted === false);
-      const trashedCards = allCards.filter((card) => card.isDeleted === true);
-
-      res.status(200).json({ dashboardCards, trashedCards });
+      res.status(200).json(cards);
 
     } catch(error) {
       console.error(error);
