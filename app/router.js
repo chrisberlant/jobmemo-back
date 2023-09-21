@@ -7,7 +7,7 @@ import contactController from './controllers/contactController.js';
 import documentController from './controllers/documentController.js';
 import dataValidation from './middlewares/dataValidationMiddleware.js';
 import { selectionSchema, cardCreationSchema, cardModificationSchema, cardMovingSchema, contactCreationSchema,
-    contactModificationSchema, userLoginSchema, userModificationSchema, userRegistrationSchema } from './validationSchemas.js';
+    contactModificationSchema, userLoginSchema, userModificationSchema, userRegistrationSchema, passwordModificationSchema } from './validationSchemas.js';
 
 // Multer allows to handle form inputs as a body object, and files uploaded as a file object
 // import multer from 'multer';
@@ -21,6 +21,7 @@ router.post('/login', dataValidation(userLoginSchema), userController.login);
 router.post('/register', dataValidation(userRegistrationSchema), userController.register);
 router.get('/getUserInfos', jwtMiddleware, userController.getUserInfos);
 router.patch('/modifyUserInfos', jwtMiddleware, dataValidation(userModificationSchema), userController.modifyUserInfos);
+router.patch('/modifyUserPassword', jwtMiddleware, dataValidation(passwordModificationSchema), userController.modifyUserPassword);
 router.get('/logout', userController.logout);
 router.delete('/deleteUser', jwtMiddleware, userController.deleteUser);
 

@@ -93,9 +93,6 @@ const cardController = {
       const oldCategory = card.category;
       const oldIndex = card.index;
 
-      console.log(oldCategory);
-      console.log(newCategory);
-
       // Create a new sequelize transaction to optimize the amount of queries done to the DB
       // It allows us to cancel everything if one the operations failed, preventing index duplicates in the DB
       const indexChangesTransaction = await sequelize.transaction();
@@ -175,7 +172,8 @@ const cardController = {
 
         // Get the highest index of the user's trashed cards
         const highestIndexInTrash = await Card.max('index', {
-          where: { userId,
+          where: { 
+            userId,
             isDeleted: true 
           },
           transaction: sendToTrashTransaction
@@ -183,7 +181,6 @@ const cardController = {
 
         // New card index will be 0 if no card is currently in the trash
         let newIndex = 0;
-        console.log(highestIndexInTrash)
         if (highestIndexInTrash != null) {
           newIndex = highestIndexInTrash + 1;
         }
@@ -261,36 +258,6 @@ const cardController = {
         throw new Error('Impossible de restaurer la fiche depuis la corbeille');
       }
     
-    } catch(error) {
-      console.error(error);
-      res.status(500).json(error);
-    }
-  },
-
-  async trashOrRestoreCard(req, res) {
-    try {
-      const userId = req.user.id;
-      const { id } = req.body;
-
-      const card = await Card.findOne({ where : { id, userId } });
-      if (!card)
-        return res.status(404).json("Impossible de trouver la fiche dans la base");
-
-      card.isDeleted = !card.isDeleted;
-
-      // When sending card to trash, assign a random index between 1000 and 9999
-      // So when the card is restored, it will go directly to the end of the category without risking to create a duplicate index
-      if (card.isDeleted)
-        card.index = Math.floor(Math.random() * 9000) + 1000;
-
-      const cardTrashedOrRestored = await card.save();
-      if (!cardTrashedOrRestored && card.isDeleted === true)
-        throw new Error("Impossible d'ajouter la fiche dans la corbeille");
-      if (!cardTrashedOrRestored)
-        throw new Error("Impossible de restaurer la fiche depuis la corbeille");
-
-      res.status(200).json(card);
-
     } catch(error) {
       console.error(error);
       res.status(500).json(error);

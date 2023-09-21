@@ -48,7 +48,6 @@ const userController = {
 
       const saltRounds = parseInt(process.env.SALT_ROUNDS);
       const hashedPassword = await bcrypt.hash(password, saltRounds); // Hashing the password provided by the user
-      console.log(hashedPassword);
 
       const alreadyExistingUser = await User.findOne({ where: { email } }); // Check if user already exists
       if (alreadyExistingUser)
@@ -74,7 +73,6 @@ const userController = {
   async getUserInfos(req, res) {
     try {
       const userId = req.user.id;
-      console.log(userId);
 
       const user = await User.findByPk(userId)
       if (!user)
@@ -106,9 +104,36 @@ const userController = {
       const newUserInfos = userIsModified.get({ plain: true });    // Create a copy of the sequelize object with only the infos needed
       delete newUserInfos.password;
       delete newUserInfos.id;
-      console.log(newUserInfos);
 
-      res.status(200).json(userIsModified);
+      res.status(200).json(newUserInfos);
+
+    } catch(error) {
+      console.error(error);
+      res.status(500).json(error);
+    }
+  },
+
+  async modifyUserPassword(req, res) {
+    try {
+      const userId = req.user.id;
+      const { oldPassword, newPassword } = req.body;
+
+      const user = await User.findByPk(userId);
+      if (!user)
+        return res.status(404).json("Impossible de trouver l'utilisateur dans la base");
+
+      const passwordsMatch = await bcrypt.compare(oldPassword, user.password);
+      if (!passwordsMatch)
+        return res.status(401).json("Ancien mot de passe incorrect");
+
+      const saltRounds = parseInt(process.env.SALT_ROUNDS);
+      const newHashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+      const passwordIsModified = await user.update({ password: newHashedPassword });
+      if (!passwordIsModified)
+        throw new Error("Impossible de modifier le mot de passe");
+
+      res.status(200).json("Mot de passe changé.");
 
     } catch(error) {
       console.error(error);
