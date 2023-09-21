@@ -60,15 +60,15 @@ export const userModificationSchema = Joi.object({
 
 export const passwordModificationSchema = Joi.object({
   oldPassword: Joi.string().min(6).required().messages({
-    'string.min': 'L\'ancien mot de passe contient au moins {#limit} caractères',
+    'string.min': 'L\'ancien mot de passe doit contenir au moins {#limit} caractères',
     'any.required': 'L\'ancien mot de passe doit être renseigné'
   }),
   newPassword: Joi.string().min(6).required().messages({
-    'string.min': 'Le mot de passe doit contenir au moins {#limit} caractères',
+    'string.min': 'Le nouveau mot de passe doit contenir au moins {#limit} caractères',
     'any.required': 'Le nouveau mot de passe doit être renseigné'
   }),
   confirmPassword: Joi.string().required().valid(Joi.ref('newPassword')).messages({
-    'any.only': 'Le mot de passe et sa confirmation sont différents',
+    'any.only': 'Le nouveau mot de passe et sa confirmation sont différents',
     'any.required': 'La confirmation doit être renseignée'
   })
 });

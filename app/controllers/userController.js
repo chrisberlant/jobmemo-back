@@ -118,6 +118,9 @@ const userController = {
       const userId = req.user.id;
       const { oldPassword, newPassword } = req.body;
 
+      if (oldPassword === newPassword)
+      return res.status(400).json("L'ancien et le nouveau mot de passe sont identiques");
+
       const user = await User.findByPk(userId);
       if (!user)
         return res.status(404).json("Impossible de trouver l'utilisateur dans la base");
