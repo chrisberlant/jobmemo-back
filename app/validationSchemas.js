@@ -44,13 +44,13 @@ export const userModificationSchema = Joi.object({
   email: Joi.string().email().messages({
     'string.email': 'L\'adresse email doit être valide.'
   }),
-  firstName: Joi.string().regex(/^[a-zA-ZÀ-ÿ' -]+$/),
-  lastName: Joi.string().regex(/^[a-zA-ZÀ-ÿ' -]+$/),
-  password: Joi.string().min(6).messages({
-    'string.min': 'Le mot de passe doit contenir au moins {#limit} caractères',
+  firstName: Joi.string().regex(/^[a-zA-ZÀ-ÿ' -]+$/).messages({
+    'string.pattern.base': 'Le prénom contient des caractères invalides',
+    'string.empty': 'Le prénom ne peut pas être vide'
   }),
-  confirmPassword: Joi.string().valid(Joi.ref('password')).messages({
-    'any.only': 'Le mot de passe et sa confirmation sont différents'
+  lastName: Joi.string().regex(/^[a-zA-ZÀ-ÿ' -]+$/).messages({
+    'string.pattern.base': 'Le nom contient des caractères invalides',
+    'string.empty': 'Le nom ne peut pas être vide'
   }),
   avatarUrl: Joi.string().uri().allow('').messages({
     'string.uri': 'L\'avatar doit avoir une adresse valide'
@@ -59,11 +59,17 @@ export const userModificationSchema = Joi.object({
 });
 
 export const passwordModificationSchema = Joi.object({
-  password: Joi.string().min(6).messages({
-    'string.min': 'Le mot de passe doit contenir au moins {#limit} caractères',
+  oldPassword: Joi.string().min(6).required().messages({
+    'string.min': 'L\'ancien mot de passe contient au moins {#limit} caractères',
+    'any.required': 'L\'ancien mot de passe doit être renseigné'
   }),
-  confirmPassword: Joi.string().valid(Joi.ref('password')).messages({
-    'any.only': 'Le mot de passe et sa confirmation sont différents'
+  newPassword: Joi.string().min(6).required().messages({
+    'string.min': 'Le mot de passe doit contenir au moins {#limit} caractères',
+    'any.required': 'Le nouveau mot de passe doit être renseigné'
+  }),
+  confirmPassword: Joi.string().required().valid(Joi.ref('newPassword')).messages({
+    'any.only': 'Le mot de passe et sa confirmation sont différents',
+    'any.required': 'La confirmation doit être renseignée'
   })
 });
 

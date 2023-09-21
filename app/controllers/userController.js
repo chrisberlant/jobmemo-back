@@ -113,6 +113,34 @@ const userController = {
     }
   },
 
+  async modifyUserPassword(req, res) {
+    try {
+      const userId = req.user.id;
+      const { oldPassword, newPassword } = req.body;
+
+      const user = await User.findByPk(userId);
+      if (!user)
+        return res.status(404).json("Impossible de trouver l'utilisateur dans la base");
+
+      const passwordsMatch = await bcrypt.compare(oldPassword, user.password);
+      if (!passwordsMatch)
+        return res.status(401).json("Ancien mot de passe incorrect");
+
+      const saltRounds = parseInt(process.env.SALT_ROUNDS);
+      const newHashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+      const passwordIsModified = await user.update({ password: newHashedPassword });
+      if (!passwordIsModified)
+        throw new Error("Impossible de modifier le mot de passe");
+
+      res.status(200).json("Mot de passe changé.");
+
+    } catch(error) {
+      console.error(error);
+      res.status(500).json(error);
+    }
+  },
+
   async deleteUser(req, res) {
     try {
       const userId = req.user.id;
