@@ -28,7 +28,7 @@ CREATE TABLE card (
     location text DEFAULT '',
     salary text DEFAULT '',
     job_title text DEFAULT '',
-    notation int2 NOT NULL DEFAULT 1,
+    rating int2 NOT NULL DEFAULT 1,
     color text NOT NULL DEFAULT '#fff' CHECK (color <> ''),
     is_deleted bool NOT NULL DEFAULT false,
     notes text DEFAULT '',

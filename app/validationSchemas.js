@@ -99,7 +99,7 @@ export const cardCreationSchema = Joi.object({
   location: Joi.string().allow(''),
   salary: Joi.string().allow(''),
   jobTitle: Joi.string().allow(''),
-  notation: Joi.number().integer().min(0).max(5).messages({
+  rating: Joi.number().integer().min(0).max(5).messages({
     'number.base': 'La note doit être un entier compris entre 0 et 5'
   }),
   color: Joi.string(),
@@ -130,7 +130,7 @@ export const cardModificationSchema = Joi.object({
   location: Joi.string().allow(''),
   salary: Joi.string().allow(''),
   jobTitle: Joi.string().allow(''),
-  notation: Joi.number().integer().min(0).max(5).messages({
+  rating: Joi.number().integer().min(0).max(5).messages({
     'number.base': 'La note doit être un nombre compris entre 0 et 5',
     'number.min': 'La note doit être supérieure ou égale à 0',
     'number.max': 'La note doit être inférieure ou égale à 5'

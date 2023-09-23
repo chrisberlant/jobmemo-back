@@ -41,7 +41,7 @@ Card.init({
   location: DataTypes.TEXT,
   salary: DataTypes.TEXT,
   jobTitle: DataTypes.TEXT,
-  notation: {
+  rating: {
     type: DataTypes.INTEGER,
     allowNull: false,
     defaultValue: 1
