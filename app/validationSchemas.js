@@ -92,7 +92,6 @@ export const cardCreationSchema = Joi.object({
     'any.only': 'La catégorie doit être au choix : CDI, CDD, Alternance ou Autre',
     'any.required': 'Le type de contrat doit être renseigné'
   }),
-  description: Joi.string().allow(''),
   offerUrl: Joi.string().uri().allow('').messages({
     'string.uri': 'Le lien de l\'offre doit être une adresse valide'
   }),
@@ -103,7 +102,7 @@ export const cardCreationSchema = Joi.object({
     'number.base': 'La note doit être un entier compris entre 0 et 5'
   }),
   color: Joi.string(),
-  notes: Joi.string().allow(''),
+  comments: Joi.string().allow(''),
   reminder: Joi.date().allow(''),
   logoUrl: Joi.string().uri().allow('').messages({
     'string.uri': 'Le lien du logo doit avoir une adresse valide'
@@ -123,7 +122,6 @@ export const cardModificationSchema = Joi.object({
   contractType: Joi.string().valid('CDI', 'CDD', 'Alternance', 'Autre').messages({
     'any.only': 'La catégorie doit être au choix : CDI, CDD, Alternance ou Autre'
   }),
-  description: Joi.string().allow(''),
   offerUrl: Joi.string().uri().allow('').messages({
     'string.uri': 'Le lien de l\'offre doit être une adresse valide'
   }),
@@ -136,7 +134,7 @@ export const cardModificationSchema = Joi.object({
     'number.max': 'La note doit être inférieure ou égale à 5'
   }),
   color: Joi.string(),
-  notes: Joi.string().allow(''),
+  comments: Joi.string().allow(''),
   reminder: Joi.date().allow(''),
   logoUrl: Joi.string().uri().allow('').messages({
     'string.uri': 'Le lien du logo doit avoir une adresse valide'

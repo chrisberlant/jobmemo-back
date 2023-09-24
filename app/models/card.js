@@ -36,7 +36,6 @@ Card.init({
     allowNull: false,
     defaultValue: 'Autre'
   },
-  description: DataTypes.TEXT,
   offerUrl: DataTypes.TEXT,
   location: DataTypes.TEXT,
   salary: DataTypes.TEXT,
@@ -56,7 +55,7 @@ Card.init({
     allowNull: false,
     defaultValue: false
   },
-  notes: DataTypes.TEXT,
+  comments: DataTypes.TEXT,
   reminder: DataTypes.DATE,
   logoUrl: DataTypes.TEXT,
 }, {

@@ -31,7 +31,7 @@ CREATE TABLE card (
     rating int2 NOT NULL DEFAULT 1,
     color text NOT NULL DEFAULT '#fff' CHECK (color <> ''),
     is_deleted bool NOT NULL DEFAULT false,
-    notes text DEFAULT '',
+    comments text DEFAULT '',
     reminder timestamptz,
     logo_url text DEFAULT '',
     created_at timestamptz NOT NULL,
