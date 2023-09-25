@@ -55,9 +55,15 @@ const cardController = {
           },
           transaction: creationTransaction
         });
+        
+        // New card index will be 0 if no card is currently in the trash
+        let newCardIndex = 0;
+        if (highestIndexInCategory != null) {
+          newCardIndex = highestIndexInCategory + 1;
+        }
 
       // New card is created according to the data provided by the user
-        const newCard = await Card.create({ ...newCardInfos, index: highestIndexInCategory + 1, userId }, {
+        const newCard = await Card.create({ ...newCardInfos, index: newCardIndex, userId }, {
           transaction: creationTransaction
         });
         
