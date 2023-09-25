@@ -43,14 +43,31 @@ const cardController = {
       const userId = req.user.id;
       const newCardInfos = req.body;
 
-      // TODO Transaction pour créer la carte au dernier index de la catégorie
+      const creationTransaction = await sequelize.transaction();
 
-      // New card is created according to the data provided by the user, and userId is set according to the request info
-      const newCard = await Card.create({ ...newCardInfos, userId });
-      if (!newCard)
-        throw new Error("Impossible de créer la fiche");
+      try {
+        // Get the highest index in the category in which the card is created
+        const highestIndexInCategory = await Card.max('index', {
+          where: { 
+            userId, 
+            isDeleted: false, 
+            category: newCardInfos.category 
+          },
+          transaction: creationTransaction
+        });
 
-      res.status(201).json(newCard);
+      // New card is created according to the data provided by the user
+        const newCard = await Card.create({ ...newCardInfos, index: highestIndexInCategory + 1, userId }, {
+          transaction: creationTransaction
+        });
+        
+        await creationTransaction.commit();
+        res.status(201).json(newCard);
+
+      } catch(error) {
+        await creationTransaction.rollback();   // Cancel the whole transaction
+        throw new Error('Impossible de créer la fiche');
+      }
 
     } catch(error) {
       console.error(error);
