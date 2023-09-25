@@ -10,7 +10,7 @@ const cardController = {
 
       const cards = await Card.findAll({ where: { userId } });
       if (!cards)
-        return res.status(404).json("Can't find cards");
+        return res.status(404).json("Aucune fiche n'a été trouvée");
 
       res.status(200).json(cards);
 
@@ -56,7 +56,7 @@ const cardController = {
           transaction: creationTransaction
         });
         
-        // New card index will be 0 if no card is currently in the trash
+        // New card index will be 0 if no card is currently in the category
         let newCardIndex = 0;
         if (highestIndexInCategory != null) {
           newCardIndex = highestIndexInCategory + 1;
