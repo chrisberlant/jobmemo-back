@@ -1,5 +1,4 @@
 import { Router } from 'express';
-const router = Router();
 import jwtMiddleware from './middlewares/jwtMidleware.js';
 import upload from './middlewares/uploadMiddleware.js';
 import userController from './controllers/userController.js';
@@ -9,6 +8,8 @@ import documentController from './controllers/documentController.js';
 import dataValidation from './middlewares/dataValidationMiddleware.js';
 import { selectionSchema, cardCreationSchema, cardModificationSchema, cardMovingSchema, contactCreationSchema,
     contactModificationSchema, userLoginSchema, userModificationSchema, userRegistrationSchema, passwordModificationSchema } from './validationSchemas.js';
+    
+const router = Router();
 
 /* ------------- USER/AUTH ROUTES ------------- */
 router.post('/login', upload.none(), dataValidation(userLoginSchema), userController.login);
@@ -20,7 +21,7 @@ router.get('/logout', userController.logout);
 router.delete('/deleteUser', jwtMiddleware, userController.deleteUser);
 
 /* ------------- CARDS ROUTES ------------- */
-router.get('/userCards/', jwtMiddleware, cardController.getAllCards);
+router.get('/allCards/', jwtMiddleware, cardController.getAllCards);
 router.get('/card/:id', jwtMiddleware, dataValidation(selectionSchema), cardController.getCardById);
 router.post('/createNewCard', jwtMiddleware, upload.none(), dataValidation(cardCreationSchema), cardController.createNewCard);
 router.patch('/modifyCard', jwtMiddleware, upload.none(), dataValidation(cardModificationSchema), cardController.modifyCard);
@@ -37,7 +38,7 @@ router.patch('/modifyContact', jwtMiddleware, upload.none(), dataValidation(cont
 router.delete('/deleteContact', jwtMiddleware, upload.none(), dataValidation(selectionSchema), contactController.deleteContact);
 
 /* ------------- DOCUMENTS ROUTES ------------- */
-router.post('/uploadFile', jwtMiddleware, upload.single('file'), documentController.uploadNewDocument);
-router.get('/userDocuments', jwtMiddleware, documentController.getUserDocuments);
+router.get('/allDocuments', jwtMiddleware, documentController.getUserDocuments);
+router.post('/uploadNewDocument', jwtMiddleware, upload.single('file'), documentController.uploadNewDocument);
 
 export default router;
