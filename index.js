@@ -5,7 +5,6 @@ import cookieParser from 'cookie-parser';
 import router from './app/router.js';
 import cors from 'cors';
 import middleware404 from './app/middlewares/middleware404.js';
-import multer from 'multer';
 
 const app = express();
 app.use(cookieParser());
@@ -18,9 +17,6 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(express.json());
-const mutipartParser = multer();
-app.use(mutipartParser.none());
-
 
 app.use(router);
 
