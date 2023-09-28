@@ -8,13 +8,9 @@ import documentController from './controllers/documentController.js';
 import dataValidation from './middlewares/dataValidationMiddleware.js';
 import { selectionSchema, cardCreationSchema, cardModificationSchema, cardMovingSchema, contactCreationSchema,
     contactModificationSchema, userLoginSchema, userModificationSchema, userRegistrationSchema, passwordModificationSchema } from './validationSchemas.js';
+import multer from 'multer';
 
-// Multer allows to handle form inputs as a body object, and files uploaded as a file object
-// import multer from 'multer';
 // const upload = multer({ dest: 'uploads/' });
-
-/* ------------- TESTS ROUTES ------------- */
-router.get('/', (req, res) => res.send("Hello world"));
 
 /* ------------- USER/AUTH ROUTES ------------- */
 router.post('/login', dataValidation(userLoginSchema), userController.login);
