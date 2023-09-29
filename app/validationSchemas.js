@@ -213,9 +213,6 @@ export const documentCreationSchema = Joi.object({
   title: Joi.string().required().messages({
     'any.required': 'Le titre doit être renseigné'
   }),
-  url: Joi.string().required().messages({
-    'any.required': 'Le lien doit être renseigné'
-  }),
   type: Joi.string().valid('CV', 'Lettre de motivation', 'Autre').required().messages({
     'any.only': 'La catégorie doit être au choix : CV, Lettre de motivation ou Autre',
     'any.required': 'Le type de document doit être renseigné'
