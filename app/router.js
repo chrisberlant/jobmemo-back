@@ -6,8 +6,9 @@ import cardController from './controllers/cardController.js';
 import contactController from './controllers/contactController.js';
 import documentController from './controllers/documentController.js';
 import dataValidation from './middlewares/dataValidationMiddleware.js';
-import { selectionSchema, cardCreationSchema, cardModificationSchema, cardMovingSchema, contactCreationSchema,
-    contactModificationSchema, userLoginSchema, userModificationSchema, userRegistrationSchema, passwordModificationSchema } from './validationSchemas.js';
+import { selectionSchema, cardCreationSchema, cardModificationSchema, cardMovingSchema, 
+    contactCreationSchema, contactModificationSchema, userLoginSchema, userModificationSchema,
+    userRegistrationSchema, passwordModificationSchema, documentCreationSchema, documentModificationSchema } from './validationSchemas.js';
     
 const router = Router();
 
@@ -31,14 +32,17 @@ router.patch('/restoreCard', jwtMiddleware, upload.none(), dataValidation(select
 router.delete('/deleteCard', jwtMiddleware, upload.none(), dataValidation(selectionSchema), cardController.deleteCard);
 
 /* ------------- CONTACTS ROUTES ------------- */
-router.get('/allContacts', jwtMiddleware, contactController.getUserContacts);
+router.get('/allContacts', jwtMiddleware, contactController.getAllContacts);
 router.get('/contact/:id', jwtMiddleware, dataValidation(selectionSchema), contactController.getContactById);
 router.post('/createNewContact', jwtMiddleware, upload.none(), dataValidation(contactCreationSchema), contactController.createNewContact);
 router.patch('/modifyContact', jwtMiddleware, upload.none(), dataValidation(contactModificationSchema), contactController.modifyContact);
 router.delete('/deleteContact', jwtMiddleware, upload.none(), dataValidation(selectionSchema), contactController.deleteContact);
 
 /* ------------- DOCUMENTS ROUTES ------------- */
-router.get('/allDocuments', jwtMiddleware, documentController.getUserDocuments);
-router.post('/uploadNewDocument', jwtMiddleware, upload.single('file'), documentController.uploadNewDocument);
+router.get('/allDocuments', jwtMiddleware, documentController.getAllDocuments);
+router.get('/document/:id', jwtMiddleware, dataValidation(selectionSchema), documentController.getDocumentById);
+router.post('/createNewDocument', jwtMiddleware, upload.single('file'), dataValidation(documentCreationSchema), documentController.createNewDocument);
+router.patch('/modifyDocument', jwtMiddleware, upload.none(), dataValidation(documentModificationSchema), documentController.modifyDocument);
+router.delete('/deleteDocument', jwtMiddleware, upload.none(), dataValidation(selectionSchema), documentController.deleteDocument);
 
 export default router;

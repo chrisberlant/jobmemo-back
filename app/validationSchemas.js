@@ -2,11 +2,10 @@ import Joi from "joi";
 
 // Schema used to select anything using its id
 export const selectionSchema = Joi.object({
-  id: Joi.string().uuid().required(),
+  id: Joi.string().uuid().required()
 });
 
 // User validation schemas
-
 export const userLoginSchema = Joi.object({
   email: Joi.string().email().required().messages({
     'string.email': 'L\'adresse email doit être valide.',
@@ -73,9 +72,7 @@ export const passwordModificationSchema = Joi.object({
   })
 });
 
-
 // Card validation schemas
-
 export const cardCreationSchema = Joi.object({
   title: Joi.string().required().messages({
     'any.required': 'Le titre doit être renseigné'
@@ -133,12 +130,14 @@ export const cardModificationSchema = Joi.object({
     'number.min': 'La note doit être supérieure ou égale à 0',
     'number.max': 'La note doit être inférieure ou égale à 5'
   }),
-  color: Joi.string(),
+  color: Joi.string().messages({
+    'string.empty': 'La couleur ne doit pas être vide.'
+  }),
   comments: Joi.string().allow(''),
   reminder: Joi.date().allow(''),
   logoUrl: Joi.string().uri().allow('').messages({
     'string.uri': 'Le lien du logo doit avoir une adresse valide'
-  }),
+  })
 });
 
 export const cardMovingSchema = Joi.object({
@@ -151,12 +150,11 @@ export const cardMovingSchema = Joi.object({
   }),
   newCategory: Joi.string().valid('Mes offres', 'Mes candidatures', 'Mes relances', 'Mes entretiens').required().messages({
     'any.only': 'La catégorie doit être au choix : Mes offres, Mes candidatures, Mes relances ou Mes entretiens'
-  }),
+  })
 });
 
 
 // Contact validation schemas
-
 export const contactCreationSchema = Joi.object({
   firstName: Joi.string().regex(/^[a-zA-ZÀ-ÿ' -]+$/).required().messages({
     'string.pattern.base': 'Le prénom contient des caractères invalides',
@@ -178,7 +176,9 @@ export const contactCreationSchema = Joi.object({
   }),
   enterprise: Joi.string().allow(''),
   comments: Joi.string().allow(''),
-  color: Joi.string(),
+  color: Joi.string().messages({
+    'string.empty': 'La couleur ne doit pas être vide.'
+  })
 });
 
 export const contactModificationSchema = Joi.object({
@@ -203,5 +203,33 @@ export const contactModificationSchema = Joi.object({
   }),
   enterprise: Joi.string().allow(''),
   comments: Joi.string().allow(''),
-  color: Joi.string(),
+  color: Joi.string().messages({
+    'string.empty': 'La couleur ne doit pas être vide.'
+  })
+});
+
+// Document validation schemas
+export const documentCreationSchema = Joi.object({
+  title: Joi.string().required().messages({
+    'any.required': 'Le titre doit être renseigné'
+  }),
+  url: Joi.string().required().messages({
+    'any.required': 'Le lien doit être renseigné'
+  }),
+  type: Joi.string().valid('CV', 'Lettre de motivation', 'Autre').required().messages({
+    'any.only': 'La catégorie doit être au choix : CV, Lettre de motivation ou Autre',
+    'any.required': 'Le type de document doit être renseigné'
+  })
+});
+
+export const documentModificationSchema = Joi.object({
+  id: Joi.string().uuid().required().messages({
+    'any.required': 'L\'id doit être renseigné'
+  }),
+  title: Joi.string().messages({
+    'string.empty': 'Le titre ne doit pas être vide.'
+  }),
+  type: Joi.string().valid('CV', 'Lettre de motivation', 'Autre').messages({
+    'any.only': 'La catégorie doit être au choix : CV, Lettre de motivation ou Autre'
+  })
 });
