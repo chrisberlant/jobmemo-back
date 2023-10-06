@@ -57,13 +57,14 @@ const documentController = {
     try {
       const userId = req.user.id;
       const { id, title, type } = req.body;
+      console.log(req.body)
 
       const document = await Document.findOne({ where : { id, userId } });
 
       if (!document)
         return res.status(404).json("Impossible de trouver le contact dans la base");
 
-      const documentIsModified = await document.update({ id, title, type });
+      const documentIsModified = await document.update({ title, type });
       if (!documentIsModified)
         throw new Error('Impossible de modifier le document');
 
