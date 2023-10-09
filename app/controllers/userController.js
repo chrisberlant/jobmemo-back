@@ -26,12 +26,15 @@ const userController = {
       delete user.password;       // removing the password before using the object
       delete user.id;
 
-      // We set a variable containing the token that will be sent to the front-end
-      const token = jwt.sign({ id }, process.env.SECRET_KEY);
+      // We set a variable containing the token that will be sent to the browser
+      const token = jwt.sign({ id }, process.env.SECRET_KEY, {
+        expiresIn: '6h'
+      });
 
       // Send the JWT as cookie
       res.cookie('jobmemo_token', token, {
-        httpOnly: true
+        httpOnly: true,
+        sameSite: true
       });
       res.status(200).json(user);
 
