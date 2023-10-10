@@ -1,13 +1,13 @@
 import jwt from "jsonwebtoken";
 
 const jwtMiddleware = (req, res, next) => {
-    // Split to get the token value without the prefix 'Bearer'
     const token = req.cookies.jobmemo_token;
 
-    if (!token)
+    if (!token) // Check for the cookie presence
       return res.status(401).json("Aucun token trouvé");
 
     try {
+      // Verify if token is valid
       const verifiedToken = jwt.verify(token, process.env.SECRET_KEY);
       req.user = verifiedToken;
       next();
