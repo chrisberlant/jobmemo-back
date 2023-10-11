@@ -182,13 +182,13 @@ const cardController = {
       const sendToTrashTransaction = await sequelize.transaction();
       
       try {
-        // We will decrement the indexes of the cards belonging to the category of the trashed card
-        await Card.decrement({ index: 1 }, {   // Decrement index of the cards
+        // Decrement the index of the cards belonging to the category of the card being sent to trash
+        await Card.decrement({ index: 1 }, {
           where: {
             userId,
-            isDeleted: false, // If they are not in the trash aswell
+            isDeleted: false, // If they are not already in the trash
             category,   // If they belong to the same category
-            index : { [Op.gt]: index }         // And their index > the card to send to trash
+            index : { [Op.gt]: index }   // And their index > the card to send to trash
           },
           transaction: sendToTrashTransaction
         });

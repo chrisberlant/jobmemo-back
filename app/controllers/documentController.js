@@ -57,7 +57,6 @@ const documentController = {
     try {
       const userId = req.user.id;
       const { id, title, type } = req.body;
-      console.log(req.body)
 
       const document = await Document.findOne({ where : { id, userId } });
 
