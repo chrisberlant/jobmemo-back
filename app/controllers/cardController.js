@@ -154,7 +154,7 @@ const cardController = {
         });
 
         await indexChangesTransaction.commit();   // Execute the whole transaction
-        res.status(200).json({ card, oldCategory, oldIndex });
+        res.status(200).json(card);
         
       } catch(error) {
         await indexChangesTransaction.rollback();   // Cancel the whole transaction
@@ -173,6 +173,7 @@ const cardController = {
       const { id } = req.body;
 
       const cardToTrash = await Card.findOne({ where : { id, userId, isDeleted: false } });
+      // db.query('SELECT * FROM card WHERE id = $1 AND user_id = $2 AND is_deleted = FALSE;', [id, userId]); 
       if (!cardToTrash)
         return res.status(404).json("Impossible de trouver la fiche dans le dashboard");
 
@@ -192,6 +193,7 @@ const cardController = {
           },
           transaction: sendToTrashTransaction
         });
+        // db.query('UPDATE card SET index = index - 1 WHERE user_id = $1 AND is_deleted = FALSE AND category = $2 AND index > $3;', [userId, category, index]);
 
         // Get the highest index of the user's trashed cards
         const highestIndexInTrash = await Card.max('index', {
@@ -201,6 +203,7 @@ const cardController = {
           },
           transaction: sendToTrashTransaction
         });
+        // db.query('SELECT MAX(index) FROM card WHERE user_id = $1 AND is_deleted = TRUE;', [userId]);
 
         // New card index will be 0 if no card is currently in the trash
         let newIndex = 0;
@@ -211,6 +214,7 @@ const cardController = {
         await cardToTrash.update({ isDeleted: true, index: newIndex }, {
           transaction: sendToTrashTransaction
         });
+        // db.query('UPDATE card SET is_deleted = TRUE, index = $1 WHERE id = $2 AND user_id = $3;', [newIndex, id, userId]);
         
         await sendToTrashTransaction.commit();   // Execute the whole transaction
 
@@ -251,6 +255,7 @@ const cardController = {
           },
           transaction: restoreCardTransaction
         });
+        // db.query('UPDATE card SET index = index - 1 WHERE user_id = $1 AND is_deleted = TRUE AND index > $2;', [userId, index]);
 
         // Get the highest index of the user's card in the same category in the dashboard
         const highestIndexInDashboard = await Card.max('index', {
@@ -261,6 +266,7 @@ const cardController = {
           },
           transaction: restoreCardTransaction
         });
+        // db.query('SELECT MAX(index) FROM card WHERE user_id = $1 AND is_deleted = FALSE AND category = $2;', [userId, category]);
 
         // New card index will be 0 if no card is currently in the dashboard in this category
         let newIndex = 0;
@@ -271,6 +277,7 @@ const cardController = {
         await cardToRestore.update({ isDeleted: false, index: newIndex }, {
           transaction: restoreCardTransaction
         });
+        // db.query('UPDATE card SET is_deleted = FALSE, index = $1 WHERE id = $2 AND user_id = $3;', [newIndex, id, userId]);
         
         await restoreCardTransaction.commit();   // Execute the whole transaction
 
