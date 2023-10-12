@@ -20,4 +20,20 @@ sequelize.addHook('beforeValidate', (instance) => {
     }
   });
 
+// This hook allows to remove userId from the objects after every query to the database
+sequelize.addHook('afterFind', (results) => {
+  if (results.length > 0) {
+    results.forEach((result) => {
+      if (result.dataValues.userId) {
+        delete result.dataValues.userId;
+      }
+    });
+  } else {
+    if (results.dataValues.userId) {
+      delete results.dataValues.userId;
+    }
+  }
+});
+  
+
 export default sequelize;

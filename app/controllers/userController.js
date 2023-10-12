@@ -6,8 +6,8 @@ const userController = {
 
   async login(req, res) {
     try {
-      const credentials = req.body;
-      const { email, password } = credentials;
+      const { email, password } = req.body;
+      console.log(email);
 
       const userSearched = await User.findOne({ where:    // Find user in DB
         { email: email.toLowerCase() }
