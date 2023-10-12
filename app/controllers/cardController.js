@@ -123,7 +123,7 @@ const cardController = {
       try {
 
         // If the card changed category
-        if (oldCategory !== newCategory) {
+        if (oldCategory !== newCategory) {    // TODO fix this
         // We will change the indexes of the old category's cards
           await Card.decrement({ index: 1 }, {   // Decrement index of the cards
             where: {
