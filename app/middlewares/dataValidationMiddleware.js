@@ -6,7 +6,7 @@ export const dataValidation = (schema) => (req, res, next) => {
     // We check here if user request is GET or any other type to either validate the req.params or the req.body
     const objectToValidate = req.method === 'GET' ? req.params : req.body;
 
-    const { error } = schema.validate(objectToValidate);
+    const { error, value } = schema.validate(objectToValidate);
 
     // Joi returns an object with attribute "error" if the data didn't pass the validation schema
     if (error)          
@@ -17,6 +17,7 @@ export const dataValidation = (schema) => (req, res, next) => {
         if (key !== "password") objectToValidate[key] = xss(objectToValidate[key]);
     }
 
+    req.body = value;
     next();
 };
 

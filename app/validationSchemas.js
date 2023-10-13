@@ -5,7 +5,7 @@ export const selectionSchema = Joi.object({
   id: Joi.string().uuid().required().messages({
     'any.required': 'L\'id doit être renseigné.'
   })
-});
+}).options({ stripUnknown: true });
 
 // User validation schemas
 export const userLoginSchema = Joi.object({
@@ -17,7 +17,7 @@ export const userLoginSchema = Joi.object({
     'string.min': 'Le mot de passe doit contenir au moins {#limit} caractères.',
     'any.required': 'Le mot de passe doit être renseigné.'
   })
-});
+}).options({ stripUnknown: true });
 
 export const userRegistrationSchema = Joi.object({
   email: Joi.string().email().required().messages({
@@ -39,7 +39,7 @@ export const userRegistrationSchema = Joi.object({
     'string.pattern.base': 'Le nom contient des caractères invalides.',
     'any.required': 'Le nom doit être renseigné.'
   })
-});
+}).options({ stripUnknown: true });
 
 export const userModificationSchema = Joi.object({
   email: Joi.string().email().messages({
@@ -53,11 +53,11 @@ export const userModificationSchema = Joi.object({
     'string.pattern.base': 'Le nom contient des caractères invalides.',
     'string.empty': 'Le nom ne peut pas être vide.'
   }),
-  avatarUrl: Joi.string().uri().allow('').messages({
-    'string.uri': 'L\'avatar doit avoir une adresse valide.'
-  }),
-  address: Joi.string().allow('')
-});
+  address: Joi.string().allow(''),
+  // avatarUrl: Joi.string().uri().allow('').messages({
+  //   'string.uri': 'L\'avatar doit avoir une adresse valide.'
+  // })
+}).options({ stripUnknown: true });
 
 export const passwordModificationSchema = Joi.object({
   oldPassword: Joi.string().min(6).required().messages({
@@ -72,11 +72,12 @@ export const passwordModificationSchema = Joi.object({
     'any.only': 'Le nouveau mot de passe et sa confirmation sont différents.',
     'any.required': 'La confirmation doit être renseignée.'
   })
-});
+}).options({ stripUnknown: true });
 
 // Card validation schemas
 export const cardCreationSchema = Joi.object({
   title: Joi.string().required().messages({
+    'string.empty' : 'Le titre doit être renseigné.',
     'any.required': 'Le titre doit être renseigné.'
   }),
   category: Joi.string().valid('Mes offres', 'Mes candidatures', 'Mes relances', 'Mes entretiens').required().messages({
@@ -84,6 +85,7 @@ export const cardCreationSchema = Joi.object({
     'any.required': 'La catégorie doit être renseignée.'
   }),
   enterpriseName : Joi.string().required().messages({
+    'string.empty' : 'L\'entreprise doit être renseignée.',
     'any.required': 'L\'entreprise doit être renseignée.'
   }),
   enterpriseActivity : Joi.string().allow(''),
@@ -102,11 +104,11 @@ export const cardCreationSchema = Joi.object({
   }),
   color: Joi.string(),
   comments: Joi.string().allow(''),
-  reminder: Joi.date().allow(''),
-  logoUrl: Joi.string().uri().allow('').messages({
-    'string.uri': 'Le lien du logo doit avoir une adresse valide.'
-  })
-});
+  // reminder: Joi.date().allow(''),
+  // logoUrl: Joi.string().uri().allow('').messages({
+  //   'string.uri': 'Le lien du logo doit avoir une adresse valide.'
+  // })
+}).options({ stripUnknown: true });
 
 export const cardModificationSchema = Joi.object({
   id: Joi.string().uuid().required().messages({
@@ -136,11 +138,11 @@ export const cardModificationSchema = Joi.object({
     'string.empty': 'La couleur ne doit pas être vide.'
   }),
   comments: Joi.string().allow(''),
-  reminder: Joi.date().allow(''),
-  logoUrl: Joi.string().uri().allow('').messages({
-    'string.uri': 'Le lien du logo doit avoir une adresse valide.'
-  })
-});
+  // reminder: Joi.date().allow(''),
+  // logoUrl: Joi.string().uri().allow('').messages({
+  //   'string.uri': 'Le lien du logo doit avoir une adresse valide.'
+  // })
+}).options({ stripUnknown: true });
 
 export const cardMovingSchema = Joi.object({
   id: Joi.string().uuid().required().messages({
@@ -153,7 +155,7 @@ export const cardMovingSchema = Joi.object({
   newCategory: Joi.string().valid('Mes offres', 'Mes candidatures', 'Mes relances', 'Mes entretiens').required().messages({
     'any.only': 'La catégorie doit être au choix : Mes offres, Mes candidatures, Mes relances ou Mes entretiens.'
   })
-});
+}).options({ stripUnknown: true });
 
 
 // Contact validation schemas
@@ -181,7 +183,7 @@ export const contactCreationSchema = Joi.object({
   color: Joi.string().messages({
     'string.empty': 'La couleur ne doit pas être vide.'
   })
-});
+}).options({ stripUnknown: true });
 
 export const contactModificationSchema = Joi.object({
   id: Joi.string().uuid().required().messages({
@@ -208,7 +210,7 @@ export const contactModificationSchema = Joi.object({
   color: Joi.string().messages({
     'string.empty': 'La couleur ne doit pas être vide.'
   })
-});
+}).options({ stripUnknown: true });
 
 // Document validation schemas
 export const documentCreationSchema = Joi.object({
@@ -219,7 +221,7 @@ export const documentCreationSchema = Joi.object({
     'any.only': 'La catégorie doit être au choix : CV, Lettre de motivation ou Autre.',
     'any.required': 'Le type de document doit être renseigné.'
   })
-});
+}).options({ stripUnknown: true });
 
 export const documentModificationSchema = Joi.object({
   id: Joi.string().uuid().required().messages({
@@ -231,4 +233,4 @@ export const documentModificationSchema = Joi.object({
   type: Joi.string().valid('CV', 'Lettre de motivation', 'Autre').messages({
     'any.only': 'La catégorie doit être au choix : CV, Lettre de motivation ou Autre.'
   })
-});
+}).options({ stripUnknown: true });

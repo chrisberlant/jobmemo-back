@@ -85,6 +85,7 @@ const cardController = {
     try {
       const userId = req.user.id;
       const { id, ...newInfos } = req.body;
+      console.log('Body : ' + JSON.stringify(req.body));
 
       const card = await Card.findOne({ where : { id, userId } });
       if (!card)
@@ -123,7 +124,7 @@ const cardController = {
       try {
 
         // If the card changed category
-        if (oldCategory !== newCategory) {    // TODO fix this
+        if (newCategory !== oldCategory) {
         // We will change the indexes of the old category's cards
           await Card.decrement({ index: 1 }, {   // Decrement index of the cards
             where: {
@@ -134,19 +135,39 @@ const cardController = {
             },
             transaction: indexChangesTransaction
           });
-        }
+          await Card.increment({ index: 1 }, {   // Increment index of the cards // TODO use this only once
+            where: {
+              userId,
+              category: newCategory,                // If they belong to the new category
+              isDeleted: false,
+              index : { [Op.gte]: newIndex }         // And their index >= the moving card's index in the new category
+            },
+            transaction: indexChangesTransaction
+          });
+        } else { // If the card moved in the same category
+          if (newIndex > oldIndex) {
+            await Card.decrement({ index: 1 }, {   // Decrement index of the cards of the new category
+              where: {
+                userId,
+                category: newCategory,   
+                isDeleted: false,
+                index : { [Op.lte]: newIndex }         // And their index <= the moving card's new index
+              },
+              transaction: indexChangesTransaction
+            });
+          } else {
+              await Card.increment({ index: 1 }, {   // Increment index of the cards of the new category
+                where: {
+                  userId,
+                  category: newCategory,   
+                  isDeleted: false,
+                  index : { [Op.gte]: newIndex }         // And their index >= the moving card's new index
+                },
+                transaction: indexChangesTransaction
+              });
+            }
 
-        // Either way we will change the indexes of the new (or same) category's cards
-        await Card.increment({ index: 1 }, {   // Increment index of the cards
-          where: {
-            userId,
-            category: newCategory,                // If they belong to the new category
-            isDeleted: false,
-            index : { [Op.gte]: newCardIndex }         // And their index >= the moving card's index in the new category
-          },
-          transaction: indexChangesTransaction
-        });
-
+          }
 
         // Change the index and category (if needed) of the moving card
         await card.update({ index: newCardIndex, category: newCategory }, {
@@ -307,7 +328,7 @@ const cardController = {
       if (!cardIsDeleted)
         throw new Error("Impossible de supprimer la fiche");
 
-      res.status(200).json('Fiche supprimée');
+      res.status(200).json(id);
 
     } catch(error) {
       console.error(error);
