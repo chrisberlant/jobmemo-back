@@ -85,7 +85,6 @@ const cardController = {
     try {
       const userId = req.user.id;
       const { id, ...newInfos } = req.body;
-      console.log('Body : ' + JSON.stringify(req.body));
 
       const card = await Card.findOne({ where : { id, userId } });
       if (!card)
