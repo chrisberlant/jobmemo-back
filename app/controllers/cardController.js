@@ -122,20 +122,28 @@ const cardController = {
 
       try {
 
+        // Change the index and category (if needed) of the moving card
+        await card.update({ index: newCardIndex, category: newCategory }, {
+          transaction: indexChangesTransaction
+        });
+
         // If the card changed category
         if (newCategory !== oldCategory) {
-        // We will change the indexes of the old category's cards
+        // Change the index of the cards from the old category
           await Card.decrement({ index: 1 }, {   // Decrement index of the cards in the old category
             where: {
               userId,
               category: oldCategory,   // If they belong to the old category
-              isDeleted: false, // If they are on the dashboard
+              isDeleted: false, // If they are in the dashboard
               index : { [Op.gt]: oldIndex }         // And their index > the moving card's old index in the old category
             },
             transaction: indexChangesTransaction
           });
           await Card.increment({ index: 1 }, {   // Increment index of the cards in the new category
             where: {
+              id: {
+                [Op.ne]: card.id    // If it is not the moving card
+              },
               userId,
               category: newCategory,
               isDeleted: false,
@@ -147,31 +155,31 @@ const cardController = {
           if (newIndex > oldIndex) {
             await Card.decrement({ index: 1 }, {   // Decrement index of the cards in the category
               where: {
+                id: {
+                  [Op.ne]: card.id
+                },
                 userId,
                 category: newCategory,   
                 isDeleted: false,
-                index : { [Op.lte]: newIndex }         // And their index <= the moving card's new index
+                index: { [Op.lte]: newIndex, [Op.gt]: oldIndex }         // And their index <= the moving card's new index and > old index
               },
               transaction: indexChangesTransaction
             });
           } else {
-              await Card.increment({ index: 1 }, {   // Increment index of the cards in the new category
+              await Card.increment({ index: 1 }, {   // Increment index of the cards in the category
                 where: {
+                  id: {
+                    [Op.ne]: card.id
+                  },
                   userId,
                   category: newCategory,   
                   isDeleted: false,
-                  index : { [Op.gte]: newIndex }         // Of their index >= the moving card's new index
+                  index: { [Op.gte]: newIndex, [Op.lt]: oldIndex }         // If their index >= the moving card's new index and < old index
                 },
                 transaction: indexChangesTransaction
               });
-            }
-
           }
-
-        // Change the index and category (if needed) of the moving card
-        await card.update({ index: newCardIndex, category: newCategory }, {
-          transaction: indexChangesTransaction
-        });
+        }
 
         await indexChangesTransaction.commit();   // Execute the whole transaction
         res.status(200).json(card);
