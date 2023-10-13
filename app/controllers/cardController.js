@@ -126,7 +126,7 @@ const cardController = {
         // If the card changed category
         if (newCategory !== oldCategory) {
         // We will change the indexes of the old category's cards
-          await Card.decrement({ index: 1 }, {   // Decrement index of the cards
+          await Card.decrement({ index: 1 }, {   // Decrement index of the cards in the old category
             where: {
               userId,
               category: oldCategory,   // If they belong to the old category
@@ -135,18 +135,18 @@ const cardController = {
             },
             transaction: indexChangesTransaction
           });
-          await Card.increment({ index: 1 }, {   // Increment index of the cards // TODO use this only once
+          await Card.increment({ index: 1 }, {   // Increment index of the cards in the new category
             where: {
               userId,
-              category: newCategory,                // If they belong to the new category
+              category: newCategory,
               isDeleted: false,
-              index : { [Op.gte]: newIndex }         // And their index >= the moving card's index in the new category
+              index : { [Op.gte]: newIndex }         // If their index >= the moving card's index in the new category
             },
             transaction: indexChangesTransaction
           });
         } else { // If the card moved in the same category
           if (newIndex > oldIndex) {
-            await Card.decrement({ index: 1 }, {   // Decrement index of the cards of the new category
+            await Card.decrement({ index: 1 }, {   // Decrement index of the cards in the category
               where: {
                 userId,
                 category: newCategory,   
@@ -156,12 +156,12 @@ const cardController = {
               transaction: indexChangesTransaction
             });
           } else {
-              await Card.increment({ index: 1 }, {   // Increment index of the cards of the new category
+              await Card.increment({ index: 1 }, {   // Increment index of the cards in the new category
                 where: {
                   userId,
                   category: newCategory,   
                   isDeleted: false,
-                  index : { [Op.gte]: newIndex }         // And their index >= the moving card's new index
+                  index : { [Op.gte]: newIndex }         // Of their index >= the moving card's new index
                 },
                 transaction: indexChangesTransaction
               });
