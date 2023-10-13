@@ -17,7 +17,7 @@ export const dataValidation = (schema) => (req, res, next) => {
         if (key !== "password") objectToValidate[key] = xss(objectToValidate[key]);
     }
 
-    req.body = value;
+    req.body = value;   // Get the value returned by the validation using a schema
     next();
 };
 

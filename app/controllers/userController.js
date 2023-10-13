@@ -23,7 +23,7 @@ const userController = {
       const id = userSearched.id;
 
       const user = userSearched.get({ plain: true });    // Create a copy of the sequelize object with only the infos needed
-      delete user.password;       // removing the password before using the object
+      delete user.password;       // Removing the password before using the object
       delete user.id;
 
       // We set a variable containing the token that will be sent to the browser
