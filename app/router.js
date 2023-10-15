@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import jwtMiddleware from './middlewares/jwtMidleware.js';
 import upload from './middlewares/uploadMiddleware.js';
+import requestsLimitMiddleware from './middlewares/requestsLimitMiddleware.js';
 import userController from './controllers/userController.js';
 import cardController from './controllers/cardController.js';
 import contactController from './controllers/contactController.js';
@@ -13,7 +14,7 @@ import { selectionSchema, cardCreationSchema, cardModificationSchema, cardMoving
 const router = Router();
 
 /* ------------- USER/AUTH ROUTES ------------- */
-router.post('/login', upload.none(), dataValidation(userLoginSchema), userController.login);
+router.post('/login', requestsLimitMiddleware, upload.none(), dataValidation(userLoginSchema), userController.login);
 router.post('/register', upload.none(), dataValidation(userRegistrationSchema), userController.register);
 router.get('/getUserInfos', jwtMiddleware, userController.getUserInfos);
 router.patch('/modifyUserInfos', jwtMiddleware, upload.none(), dataValidation(userModificationSchema), userController.modifyUserInfos);

@@ -3,7 +3,8 @@ import Joi from "joi";
 // Schema used to select anything using its id
 export const selectionSchema = Joi.object({
   id: Joi.string().uuid().required().messages({
-    'any.required': 'L\'id doit être renseigné.'
+    'any.required': 'L\'id doit être renseigné.',
+    'string.guid': 'Le format de l\'id est incorrect.'
   })
 }).options({ stripUnknown: true });
 
