@@ -48,12 +48,12 @@ const userController = {
       const userToRegister = req.body;
       const { email, password } = userToRegister;
 
-      const saltRounds = parseInt(process.env.SALT_ROUNDS);
-      const hashedPassword = await bcrypt.hash(password, saltRounds); // Hashing the password provided by the user
-
       const alreadyExistingUser = await User.findOne({ where: { email } }); // Check if user already exists
       if (alreadyExistingUser)
         return res.status(401).json("Une erreur s'est produite");
+
+      const saltRounds = parseInt(process.env.SALT_ROUNDS);
+      const hashedPassword = await bcrypt.hash(password, saltRounds); // Hashing the password provided by the user
 
       const user = await User.create({ ...userToRegister, password: hashedPassword });
       if (!user)
