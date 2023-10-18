@@ -32,7 +32,7 @@ export const userRegistrationSchema = Joi.object({
   lastName: Joi.string().regex(/^[a-zA-ZÀ-ÿ' -]+$/).required().messages({
     'any.required': 'Le nom doit être renseigné.',
     'string.empty': 'Le nom doit être renseigné',
-    'string.pattern.base': 'Le nom contient des caractères invalides.',
+    'string.pattern.base': 'Le nom contient des caractères invalides.'
   }),
   firstName: Joi.string().regex(/^[a-zA-ZÀ-ÿ' -]+$/).required().messages({
     'any.required': 'Le prénom doit être renseigné.',
@@ -43,13 +43,13 @@ export const userRegistrationSchema = Joi.object({
     'any.required': 'Le mot de passe doit être renseigné.',
     'string.empty': 'Le mot de passe doit être renseigné.',
     'string.min': 'Le mot de passe doit contenir au moins {#limit} caractères.',
-    'string.pattern.base': 'Le mot de passe doit contenir une majuscule, une minuscule, un chiffre et caractère spécial.',
+    'string.pattern.base': 'Le mot de passe doit contenir une majuscule, une minuscule, un chiffre et caractère spécial.'
   }),
   confirmPassword: Joi.string().valid(Joi.ref('password')).required().messages({
     'any.required': 'La confirmation doit être renseignée.',
     'string.empty': 'La confirmation doit être renseignée.',
     'any.only': 'Le mot de passe et sa confirmation sont différents.'
-  }),
+  })
 }).options({ stripUnknown: true });
 
 export const userModificationSchema = Joi.object({
@@ -87,7 +87,7 @@ export const passwordModificationSchema = Joi.object({
   confirmPassword: Joi.string().required().valid(Joi.ref('newPassword')).messages({
     'any.required': 'La confirmation doit être renseignée.',
     'string.empty': 'La confirmation doit être renseigné.',
-    'any.only': 'Le nouveau mot de passe et sa confirmation sont différents.',
+    'any.only': 'Le nouveau mot de passe et sa confirmation sont différents.'
   })
 }).options({ stripUnknown: true });
 
