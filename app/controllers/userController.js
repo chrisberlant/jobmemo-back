@@ -149,10 +149,15 @@ const userController = {
   async deleteUser(req, res) {
     try {
       const userId = req.user.id;
+      const { password } = req.body;
 
       const user = await User.findByPk(userId);
       if (!user)
         return res.status(404).json("Impossible de trouver l'utilisateur dans la base");
+
+      const passwordsMatch = await bcrypt.compare(password, user.password);
+      if (!passwordsMatch)
+        return res.status(401).json("Email ou mot de passe incorrect");
 
       const userIsDeleted = await user.destroy();
       if (!userIsDeleted)

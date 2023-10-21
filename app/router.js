@@ -9,7 +9,7 @@ import documentController from './controllers/documentController.js';
 import dataValidation from './middlewares/dataValidationMiddleware.js';
 import { selectionSchema, cardCreationSchema, cardModificationSchema, cardMovingSchema, 
     contactCreationSchema, contactModificationSchema, userLoginSchema, userModificationSchema,
-    userRegistrationSchema, passwordModificationSchema, documentCreationSchema, documentModificationSchema } from './validationSchemas.js';
+    userRegistrationSchema, passwordModificationSchema, documentCreationSchema, documentModificationSchema, userDeletionSchema } from './validationSchemas.js';
     
 const router = Router();
 
@@ -20,7 +20,7 @@ router.get('/getUserInfos', jwtMiddleware, userController.getUserInfos);
 router.patch('/modifyUserInfos', jwtMiddleware, upload.none(), dataValidation(userModificationSchema), userController.modifyUserInfos);
 router.patch('/modifyUserPassword', jwtMiddleware, upload.none(), dataValidation(passwordModificationSchema), userController.modifyUserPassword);
 router.get('/logout', userController.logout);
-router.delete('/deleteUser', jwtMiddleware, userController.deleteUser);
+router.delete('/deleteUser', jwtMiddleware, upload.none(), dataValidation(userDeletionSchema), userController.deleteUser);
 
 /* ------------- CARDS ROUTES ------------- */
 router.get('/allCards/', jwtMiddleware, cardController.getAllCards);

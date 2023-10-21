@@ -91,6 +91,15 @@ export const passwordModificationSchema = Joi.object({
   })
 }).options({ stripUnknown: true });
 
+export const userDeletionSchema = Joi.object({
+  password: Joi.string().min(8).regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-])/).required().messages({
+    'any.required': 'Le mot de passe doit être renseigné.',
+    'string.empty': 'Le mot de passe doit être renseigné.',
+    'string.min': 'Le mot de passe est incorrect.',
+    'string.pattern.base': 'Le mot de passe est incorrect.'
+  })
+}).options({ stripUnknown: true });
+
 // Card validation schemas
 export const cardCreationSchema = Joi.object({
   title: Joi.string().required().messages({
