@@ -45,5 +45,6 @@ router.get('/document/:id', jwtMiddleware, dataValidation(selectionSchema), docu
 router.post('/createNewDocument', jwtMiddleware, upload.single('file'), dataValidation(documentCreationSchema), documentController.createNewDocument);
 router.patch('/modifyDocument', jwtMiddleware, upload.none(), dataValidation(documentModificationSchema), documentController.modifyDocument);
 router.delete('/deleteDocument', jwtMiddleware, upload.none(), dataValidation(selectionSchema), documentController.deleteDocument);
+router.get('/download/:id', jwtMiddleware, dataValidation(selectionSchema), documentController.downloadDocumentById);
 
 export default router;

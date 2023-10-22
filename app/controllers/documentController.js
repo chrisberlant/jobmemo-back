@@ -1,4 +1,5 @@
 import { Document } from "../models/index.js";
+import path from 'path';
 
 const documentController = {
 
@@ -93,7 +94,34 @@ const documentController = {
       console.error(error);
       res.status(500).json(error);
     }
-  }
+  },
+
+  async downloadDocumentById(req, res) {
+    try {
+      const userId = req.user.id;
+      const id = req.params.id;
+
+      const document = await Document.findOne({ where : { id, userId } });
+      if (!document)
+        return res.status(404).json (`Le document avec l'id ${id} n'existe pas`);
+
+      const documentUrl = document.url;
+
+      const documentPath = path.join('uploads', documentUrl);
+      console.log(documentPath);
+
+      res.download(documentPath, (err) => {
+        if (err) {
+          console.error(err);
+          return res.status(500).json(`Erreur lors du téléchargement du document : ${err.message}`);
+        }
+      });
+
+    } catch(error) {
+      console.error(error);
+      res.status(500).json(error);
+    }
+  },
 }
 
 

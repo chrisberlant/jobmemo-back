@@ -9,7 +9,7 @@ import pageNotFoundMiddleware from './app/middlewares/pageNotFoundMiddleware.js'
 const app = express();
 app.use(cookieParser());
 app.use('public', express.static('public'));
-app.use('files', express.static('files'));
+app.use('uploads', express.static('uploads'));
 
 const corsOptions = {
     origin: 'http://localhost:5173',
