@@ -16,7 +16,7 @@ CREATE TABLE "user" (
 
 CREATE TABLE card (
     id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-    user_id uuid NOT NULL CHECK (user_id <> ''),
+    user_id uuid NOT NULL CHECK (user_id IS NOT NULL),
     title text NOT NULL CHECK (title <> ''),
     category text NOT NULL DEFAULT 'Mes offres' CHECK (category <> ''),
     index int2 NOT NULL DEFAULT 0,
@@ -40,7 +40,7 @@ CREATE TABLE card (
 
 CREATE TABLE contact (
     id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-    user_id uuid NOT NULL CHECK (user_id <> ''),
+    user_id uuid NOT NULL CHECK (user_id IS NOT NULL),
     first_name text NOT NULL CHECK (first_name <> ''),
     last_name text NOT NULL CHECK (last_name <> ''),
     occupation text DEFAULT '',
@@ -55,7 +55,7 @@ CREATE TABLE contact (
 
 CREATE TABLE document (
     id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-    user_id uuid NOT NULL CHECK (user_id <> ''),
+    user_id uuid NOT NULL CHECK (user_id IS NOT NULL),
     title text NOT NULL DEFAULT 'Nouveau document'  CHECK (title <> ''),
     type text NOT NULL DEFAULT 'Autre' CHECK (type <> ''),
     url text NOT NULL,

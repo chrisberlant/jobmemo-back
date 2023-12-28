@@ -12,8 +12,8 @@ app.use('public', express.static('public'));
 app.use('uploads', express.static('uploads'));
 
 const corsOptions = {
-    origin: 'http://localhost:5173',
-    credentials: true, // Authorize credentials (used for cookies)
+	origin: 'http://localhost:5173',
+	credentials: true, // Authorize credentials (used for cookies)
 };
 
 app.use(cors(corsOptions));
@@ -25,5 +25,5 @@ app.use(pageNotFoundMiddleware);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-console.log(`Listening on <http://localhost>:${port}`);
+	console.log(`Listening on <http://localhost>:${port}`);
 });
